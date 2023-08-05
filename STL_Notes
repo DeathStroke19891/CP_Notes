@@ -1,0 +1,289 @@
+:PROPERTIES:
+:ID:       bfeba9e5-1406-4423-b9cc-920387165fd9
+:END:
+#+title: STL
+#+date: [2023-08-05 Sat 11:24]
+
+* The STL: Introduction
+The standard template library is a part of the c++ library and its major objective is to provide the implementations of well known algorithms and data structures in the form of templates.
+
+With the help of iterators it is now possible to reduce the number of implementations from n*m to n+m 
+where n is the number of algorithms and m is the number of containers.
+* STL Headers
+#+BEGIN_SRC C++
+  #include <vector>
+  #include <deque>
+  #include <list>
+  #include <set> // set and multiset
+  #include <map> // map and multimap
+  #include <unordered_set> // unordered set/multiset
+  #include <unordered_map> // unordered map/multimap
+  #include <iterator>
+  #include <algorithm>
+  #include <numeric> // some numeric algorithms
+  #include <functional>
+#+END_SRC
+* Iterators
+This library moves away from object oriented programming by separating the algorithms from the data by introducting a concept called the iterator.
+An iterator is a class which has to be implemented by each of the containers(data structures) and the algorithms act on these data structures irrespective of its type.
+All iterators behave like pointers and can be dereference to obtain the value.
+
+The iterator abides by the following mathematical notation [begin,end).
+
+ctr.begin() -> first element of the container
+
+ctr.end() -> the one spot after the last element in the container
+
+ctr.cbegin() -> const iterator to first element of the container
+
+ctr.cend() -> const iterator to the one spot after the last element in the container
+
+** Types of Iterators
+***  Random Access Iterator: vector, deque, array
+#+BEGIN_SRC C++ 
+  vector<int> itr;
+  itr = itr + 5; // can be added with numbers
+  itr = itr - 4;
+  if (itr2 > itr1) // can be compared
+    ++itr; //faster than itr++
+  --itr;
+#+END_SRC
+***  Bidirectional Iterator: list, set/multiset, map/multimap
+#+BEGIN_SRC C++
+  list<int> itr;
+  ++itr;
+  --itr;
+#+END_SRC
+***  Forward Iterator: forward list
+#+BEGIN_SRC C++
+  forward_list<int> itr;
+  ++itr;
+#+END_SRC
+***  Iterators of Unordered Containers
+They provide at least forward iterators, but have an option to provide bidirectional iterator
+***  Input Iterator
+Read and process values while iterating forward
+#+BEGIN_SRC C++
+  int x = *itr;
+#+END_SRC
+***  Output Iterator
+Output values while iterating forward
+#+BEGIN_SRC C++
+  *itr = 100;
+#+END_SRC
+** Const Iterators
+Provide read only access to container elements.
+#+BEGIN_SRC C++
+  for_each(myset.cbegin(), myset.cend(), MyFunction);
+#+END_SRC
+** Iterator functions
+#+BEGIN_SRC C++
+  advace(itr, 5);
+  distance(itr1, itr2);
+#+END_SRC
+** Iterator Adaptor
+A special, more powerful iterator
+*** Insert Iterator
+#+BEGIN_SRC C++
+  vector<int> vec1 = {4, 5};
+  vector<int> vec2 = {12, 14, 16, 18};
+  vector<int>::iterator it = find(vec2.begin(), vec2.end(), 16);
+  insert_iterator<vector<int> i_itr(vec2, it);
+  copy(vec1.begin(), vec1.end(), i_itr);
+#+END_SRC
+*** Stream Iterator
+*** Reverse Iterator
+*** Move Iterator
+* Containers
+** Sequence Containers
+Typically implemented with arrays or linked lists. The sequence containers include:
+1. Array /stl/
+2. Linked List
+3. vector /stl/
+4. deque /stl/
+5. list /stl/
+6. forward list /stl/
+*** Vector
+**** Properties of a vector
+1. Fast insert/remove at the end: O(1)
+2. Slow insert/remove at the beginning or in the middle: O(n)
+3. slow search: O(n)
+**** Important Features and titbits for CP
+#+BEGIN_SRC C++
+  for(auto it: vec) // This is faster than the normal looping over the vector elements like an array
+    cout << it << " ";
+
+  // Vectors are dynamically allocated contiguous array in memory
+  int* p = &vec[0];
+  p[2] = 6; // This works!!
+#+END_SRC
+*** Deque
+Deque and vector has very similar interfaces.
+The only difference is that the vector can only grow in the end, while a deque can grow on both sides.
+However the underlying implementation of deque does not provide contiguous memory allocation
+**** Properties of a deque
+1. Fast insert/remove at the beginning and the end: O(1)
+2. slow insert/remove in the middle: O(n)
+3. slow search: O(n)
+**** Important Features and titbits for CP
+#+BEGIN_SRC C++ 
+  deque<int> deq = { 4, 6, 7};
+  deq.push_front(2);
+  deq.push_back(3);
+
+  // Deque has similar interface with vector
+  cout << deq[1];
+#+END_SRC
+*** List
+A list is a doubly linked list.
+**** Properties of a List
+1. Fast insert/remove at any place: O(1)
+2. No random access, no [] operator
+3. slow search: O(n), slower than vector because of cache
+4. But it has a killer function, which is splice
+**** Important Features and titbits for CP
+#+BEGIN_SRC C++ 
+  list<int>::iterator itr = find(mylist.begin(), mylist.end(), 2);
+  mylist.insert(itr, 8) // inserts 8 in front of the itr
+  itr++;
+  mylist.erase(itr) // removal with O(1)
+
+  // Splice
+  mylist1.splice(itr, mylist2, itr_a, itr_b); // O(1)
+                            // Takes all the data(nodes) between itr_a, itr_b
+                // stores it in mylist1 at itr and this takes constant time
+#+END_SRC
+*** Forwand List
+Same as list but only forward pointers
+*** Array Container
+#+BEGIN_SRC C++
+  array<int, 3> a = {3, 4, 5};
+  a.begin();
+  a.end();
+  a.size();
+  a.swap();
+
+  // Size cannot change
+
+  array<int, 4> b = {3, 4, 5};
+  // Here a and b are of different types due to their different sizes
+#+END_SRC
+** Associative Containers
+Typically implemented with a binary tree. The key feature of these containers is the fact that all the elements are always sorted.
+These include
+1. set, multiset /stl/
+2. map, multimap /stl/
+
+By default as elements are sorted by < and any operation insertion or removal maintains the sorted order.
+
+Associative actually comes from the map where a value is associated with the key.
+The set and multiset can be thought of as a special case where the key == value.
+*** Set
+Set has no duplicate items. Value of the elements cannot be modified
+**** Properties of a Set
+1. Insertion takes O(log(n))
+2. Search/Find takes O(log(n))
+3. With hints, insertion takes O(1)
+4. Traversing is slow (compared to vector & deque)
+5. No random access, no [] operator.
+**** Important Features and titbits for CP
+#+BEGIN_SRC C++
+  set<int> myset;
+  myset.insert(3);
+  myset.insert(1);
+  myset.insert(7);
+
+  set<int>::iterator it;
+  it = myset.find(7);
+
+  pair<set<int>::iterator, bool> ret;
+  ret = myset.insert(3);
+  if(ret.second == false)
+    it=ret.first;
+
+  myset.insert(it, 9); //This reduces insertion to O(1)
+  myset.erase(it);
+#+END_SRC
+*** Multiset
+Multiset is a set that allows duplicate items. Value of the element cannot be modified.
+**** Properties of a MultiSet
+1. Fast search: O(log(n))
+2. Traversing is slow (compared to vector & deque)
+3. No random access, no [] operator.
+*** Map
+Map doesn't allow elements with duplicate keys. The map is sorted according to the value of the key.
+The key of a map cannot be modified.
+**** Properties of a Map
+1. 
+**** Important Features and titbits for CP
+#+BEGIN_SRC C++
+  map<char, int> mymap;
+  mymap.insert ( pair<char, int>('a', 100));
+  mymap.insert ( make_pair('z', 200));
+
+  map<char, int>::iterator it = mymap.begin();
+  mymap.insert(it, pair<char, int>('b', 300));
+
+  it = mymap.find('z'); // O(log(n))
+
+  for( it=mymap.begin(); it != mymap.end(); it++){
+    cout << (*it).first << " => " << (*it).second << endl;
+  }
+#+END_SRC
+*** Multimap
+Multimap is a map that allows duplicated keys. The key of a map cannot be modified.
+No random access, no [] operator.
+** Unordered Containers
+Typically implemented with a hash table.
+These include
+1. unordered set/multiset /stl/
+2. unordered map/multimap /stl/
+*** Hash table specific APIs
+#+BEGIN_SRC C++ 
+  myset.load_factor(); // ratio of total no of elements and total no of buckets
+  myset.bucket(x);
+  myset.bucket_count();
+#+END_SRC
+*** Unordered set
+Unordered set has no duplicate elements. Value of the key cannot be modified.
+#+BEGIN_SRC C++
+  vector<string> vec = {"purple", "pink"};
+  myset.insert(vec.begin(), vec.end());
+#+END_SRC
+There is no random access, no [] operator.
+*** Unordered multiset
+Unordered set with duplicated elements. Maintains a count for each element.
+Takes more space compared to unordered set.
+No random access, no [] operator.
+*** Unordered map
+Unordered set of pairs. 
+*** Unordered multimap
+Unordered map that allows duplicated keys. Uses chaining or some sort of probing mechanism.
+No random acesss, no [] operator. 
+** Associative arrays
+**** Properties of Assciative array
+1. Seach time: unordered map: O(1); map: O(log(n))
+2. Unordered_ map may degrade to O(n)
+3. Can't use multimap and unordered multimap as they don't have [] operator.
+** Container Adaptor
+Provide a restricted interface to meet special needs.
+Implemented with fundamental container classes
+*** Stack
+LIFO, push(), pop(), top()
+*** Queue
+FIFO, push(), pop(), front(), back()
+*** Priority queue
+push(), pop(), top()
+* Algorithm
+There are some common APIs provided by all containers
+1. .empty()
+2. .size()
+3. copy constructor
+   #+BEGIN_SRC C++
+     vector<int> vec2(vec); // Copy constructor
+   #+END_SRC
+4. .clear()
+5. .swap()
+** sort()
+This algorithm takes two iterators and sorts all the elements in the range between the two iterators.
+* Functors
