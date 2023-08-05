@@ -1,53 +1,59 @@
 
 # Table of Contents
 
-1.  [The STL: Introduction](#orgd366517)
-2.  [STL Headers](#org831251e)
-3.  [Iterators](#orga814ddf)
-    1.  [Types of Iterators](#org3a65c92)
-        1.  [Random Access Iterator: vector, deque, array](#org56b7380)
-        2.  [Bidirectional Iterator: list, set/multiset, map/multimap](#org19ae0f8)
-        3.  [Forward Iterator: forward list](#orgf9c2753)
-        4.  [Iterators of Unordered Containers](#orge7f445a)
-        5.  [Input Iterator](#orgc0f183a)
-        6.  [Output Iterator](#org8208ca8)
-    2.  [Const Iterators](#orgfb40774)
-    3.  [Iterator functions](#org9fc7c38)
-    4.  [Iterator Adaptor](#orga1aee7b)
-        1.  [Insert Iterator](#orgc0b94d0)
-        2.  [Stream Iterator](#org0549702)
-        3.  [Reverse Iterator](#org26bd28e)
-        4.  [Move Iterator](#org7c24ebb)
-4.  [Containers](#org2a0fd29)
-    1.  [Sequence Containers](#org4b3c364)
-        1.  [Vector](#org88dcc8c)
-        2.  [Deque](#orge645d2a)
-        3.  [List](#org0eaf75e)
-        4.  [Forwand List](#org293ba77)
-        5.  [Array Container](#org36e193c)
-    2.  [Associative Containers](#orgc0c5d0a)
-        1.  [Set](#orgd0b7363)
-        2.  [Multiset](#org62518f1)
-        3.  [Map](#org463d1f3)
-        4.  [Multimap](#orgcdfb953)
-    3.  [Unordered Containers](#orgb0ed5e2)
-        1.  [Hash table specific APIs](#org0ba938f)
-        2.  [Unordered set](#org83139ae)
-        3.  [Unordered multiset](#orgbef8ad8)
-        4.  [Unordered map](#orgde4d982)
-        5.  [Unordered multimap](#org435f962)
-    4.  [Associative arrays](#org899a051)
-    5.  [Container Adaptor](#org3f4406c)
-        1.  [Stack](#orgd0bce67)
-        2.  [Queue](#orgfe52ae5)
-        3.  [Priority queue](#org9e1fc78)
-5.  [Algorithm](#org272040e)
-    1.  [sort()](#org842fde1)
-6.  [Functors](#org72e161e)
+1.  [The STL: Introduction](#org3a9e7d3)
+2.  [STL Headers](#orgc83920d)
+3.  [Iterators](#orgf60c1c6)
+    1.  [Types of Iterators](#org0809360)
+        1.  [Random Access Iterator: vector, deque, array](#org47afa5d)
+        2.  [Bidirectional Iterator: list, set/multiset, map/multimap](#org69f5af8)
+        3.  [Forward Iterator: forward list](#org325082c)
+        4.  [Iterators of Unordered Containers](#org09d7968)
+        5.  [Input Iterator](#orgd20cc61)
+        6.  [Output Iterator](#org5a182a2)
+    2.  [Const Iterators](#orgc0357a6)
+    3.  [Iterator functions](#org03cb015)
+    4.  [Iterator Adaptor](#org1d12b4f)
+        1.  [Insert Iterator](#org079cc21)
+        2.  [Iterator Stream](#orgda776fb)
+        3.  [Reverse Iterator](#orge172ba4)
+        4.  [Move Iterator](#orgacb9737)
+4.  [Containers](#org8026207)
+    1.  [Sequence Containers](#org5a22db9)
+        1.  [Vector](#org41762a8)
+        2.  [Deque](#org054ad90)
+        3.  [List](#orge74ee5c)
+        4.  [Forwand List](#org153ec4b)
+        5.  [Array Container](#orge132770)
+    2.  [Associative Containers](#orgabb7ae2)
+        1.  [Set](#org4dc099d)
+        2.  [Multiset](#org712b394)
+        3.  [Map](#org6d15fcc)
+        4.  [Multimap](#orgaa860d5)
+    3.  [Unordered Containers](#orgf63f3ed)
+        1.  [Hash table specific APIs](#org4d4c683)
+        2.  [Unordered set](#org5f12c69)
+        3.  [Unordered multiset](#org7fcb83b)
+        4.  [Unordered map](#orgb910db4)
+        5.  [Unordered multimap](#orge915d5b)
+    4.  [Associative arrays](#org2f8a3d6)
+    5.  [Container Adaptor](#org4b3d942)
+        1.  [Stack](#orgf3d09c5)
+        2.  [Queue](#orge4a6a3c)
+        3.  [Priority queue](#org73e52cd)
+5.  [Algorithm](#orge551bb6)
+    1.  [Common Vector Algorithms](#org97667a4)
+        1.  [`sort()`](#orged791df)
+        2.  [`min_element()`](#org9d2feab)
+        3.  [`reverse()`](#orge984f97)
+        4.  [`copy()`](#org33de578)
+        5.  [`insert()`](#orgedd8872)
+        6.  [`find_if()`](#orge3bf987)
+6.  [Functors](#org0d24f4a)
 
 
 
-<a id="orgd366517"></a>
+<a id="org3a9e7d3"></a>
 
 # The STL: Introduction
 
@@ -57,7 +63,7 @@ With the help of iterators it is now possible to reduce the number of implementa
 where n is the number of algorithms and m is the number of containers.
 
 
-<a id="org831251e"></a>
+<a id="orgc83920d"></a>
 
 # STL Headers
 
@@ -74,7 +80,7 @@ where n is the number of algorithms and m is the number of containers.
     #include <functional>
 
 
-<a id="orga814ddf"></a>
+<a id="orgf60c1c6"></a>
 
 # Iterators
 
@@ -93,12 +99,12 @@ ctr.cbegin() -> const iterator to first element of the container
 ctr.cend() -> const iterator to the one spot after the last element in the container
 
 
-<a id="org3a65c92"></a>
+<a id="org0809360"></a>
 
 ## Types of Iterators
 
 
-<a id="org56b7380"></a>
+<a id="org47afa5d"></a>
 
 ### Random Access Iterator: vector, deque, array
 
@@ -110,7 +116,7 @@ ctr.cend() -> const iterator to the one spot after the last element in the conta
     --itr;
 
 
-<a id="org19ae0f8"></a>
+<a id="org69f5af8"></a>
 
 ### Bidirectional Iterator: list, set/multiset, map/multimap
 
@@ -119,7 +125,7 @@ ctr.cend() -> const iterator to the one spot after the last element in the conta
     --itr;
 
 
-<a id="orgf9c2753"></a>
+<a id="org325082c"></a>
 
 ### Forward Iterator: forward list
 
@@ -127,14 +133,14 @@ ctr.cend() -> const iterator to the one spot after the last element in the conta
     ++itr;
 
 
-<a id="orge7f445a"></a>
+<a id="org09d7968"></a>
 
 ### Iterators of Unordered Containers
 
 They provide at least forward iterators, but have an option to provide bidirectional iterator
 
 
-<a id="orgc0f183a"></a>
+<a id="orgd20cc61"></a>
 
 ### Input Iterator
 
@@ -143,7 +149,7 @@ Read and process values while iterating forward
     int x = *itr;
 
 
-<a id="org8208ca8"></a>
+<a id="org5a182a2"></a>
 
 ### Output Iterator
 
@@ -152,7 +158,7 @@ Output values while iterating forward
     *itr = 100;
 
 
-<a id="orgfb40774"></a>
+<a id="orgc0357a6"></a>
 
 ## Const Iterators
 
@@ -161,7 +167,7 @@ Provide read only access to container elements.
     for_each(myset.cbegin(), myset.cend(), MyFunction);
 
 
-<a id="org9fc7c38"></a>
+<a id="org03cb015"></a>
 
 ## Iterator functions
 
@@ -169,45 +175,70 @@ Provide read only access to container elements.
     distance(itr1, itr2);
 
 
-<a id="orga1aee7b"></a>
+<a id="org1d12b4f"></a>
 
 ## Iterator Adaptor
 
 A special, more powerful iterator
 
 
-<a id="orgc0b94d0"></a>
+<a id="org079cc21"></a>
 
 ### Insert Iterator
+
+Used to insert a range of iterators before the insert iterator
 
     vector<int> vec1 = {4, 5};
     vector<int> vec2 = {12, 14, 16, 18};
     vector<int>::iterator it = find(vec2.begin(), vec2.end(), 16);
     insert_iterator<vector<int> i_itr(vec2, it);
+    // insert_iterator<vector<int> i_itr = inserter(vec2, it); // Alternative initialisation
     copy(vec1.begin(), vec1.end(), i_itr);
 
+There are two type of insert iterators:
 
-<a id="org0549702"></a>
+1.  Back insert iterator
+2.  Front insert iterator
 
-### Stream Iterator
+
+<a id="orgda776fb"></a>
+
+### Iterator Stream
+
+    vector<string> vec4;
+    copy(istream_iterator<string>(cin), back_inserter(vec4));
+    
+    copy(vec4.begin(), vec4.end(), ostream_iterator<string>(cout, " "));
+    
+    // Complicated example
+    
+    copy(istream_iterator<string>(cin), istream_iterator<string>(), ostream_iterator<string>(cout, " "));
 
 
-<a id="org26bd28e"></a>
+<a id="orge172ba4"></a>
 
 ### Reverse Iterator
 
+Reverse iterator can traverse a container in reverse order.
 
-<a id="org7c24ebb"></a>
+    vector<int> vec = {4, 5, 6, 7};
+    reverse_iterator<vector<int>::iterator> ritr;
+    for(ritr = vec.rbegin(); ritr != vec.rend(); ritr++){
+      cout << *ritr << endl;
+    }
+
+
+<a id="orgacb9737"></a>
 
 ### Move Iterator
 
 
-<a id="org2a0fd29"></a>
+<a id="org8026207"></a>
 
 # Containers
 
 
-<a id="org4b3c364"></a>
+<a id="org5a22db9"></a>
 
 ## Sequence Containers
 
@@ -221,7 +252,7 @@ Typically implemented with arrays or linked lists. The sequence containers inclu
 6.  forward list *stl*
 
 
-<a id="org88dcc8c"></a>
+<a id="org41762a8"></a>
 
 ### Vector
 
@@ -241,7 +272,7 @@ Typically implemented with arrays or linked lists. The sequence containers inclu
         p[2] = 6; // This works!!
 
 
-<a id="orge645d2a"></a>
+<a id="org054ad90"></a>
 
 ### Deque
 
@@ -265,7 +296,7 @@ However the underlying implementation of deque does not provide contiguous memor
         cout << deq[1];
 
 
-<a id="org0eaf75e"></a>
+<a id="orge74ee5c"></a>
 
 ### List
 
@@ -291,14 +322,14 @@ A list is a doubly linked list.
                       // stores it in mylist1 at itr and this takes constant time
 
 
-<a id="org293ba77"></a>
+<a id="org153ec4b"></a>
 
 ### Forwand List
 
 Same as list but only forward pointers
 
 
-<a id="org36e193c"></a>
+<a id="orge132770"></a>
 
 ### Array Container
 
@@ -314,7 +345,7 @@ Same as list but only forward pointers
     // Here a and b are of different types due to their different sizes
 
 
-<a id="orgc0c5d0a"></a>
+<a id="orgabb7ae2"></a>
 
 ## Associative Containers
 
@@ -330,7 +361,7 @@ Associative actually comes from the map where a value is associated with the key
 The set and multiset can be thought of as a special case where the key == value.
 
 
-<a id="orgd0b7363"></a>
+<a id="org4dc099d"></a>
 
 ### Set
 
@@ -363,7 +394,7 @@ Set has no duplicate items. Value of the elements cannot be modified
         myset.erase(it);
 
 
-<a id="org62518f1"></a>
+<a id="org712b394"></a>
 
 ### Multiset
 
@@ -376,7 +407,7 @@ Multiset is a set that allows duplicate items. Value of the element cannot be mo
     3.  No random access, no [] operator.
 
 
-<a id="org463d1f3"></a>
+<a id="org6d15fcc"></a>
 
 ### Map
 
@@ -403,7 +434,7 @@ The key of a map cannot be modified.
         }
 
 
-<a id="orgcdfb953"></a>
+<a id="orgaa860d5"></a>
 
 ### Multimap
 
@@ -411,7 +442,7 @@ Multimap is a map that allows duplicated keys. The key of a map cannot be modifi
 No random access, no [] operator.
 
 
-<a id="orgb0ed5e2"></a>
+<a id="orgf63f3ed"></a>
 
 ## Unordered Containers
 
@@ -422,7 +453,7 @@ These include
 2.  unordered map/multimap *stl*
 
 
-<a id="org0ba938f"></a>
+<a id="org4d4c683"></a>
 
 ### Hash table specific APIs
 
@@ -431,7 +462,7 @@ These include
     myset.bucket_count();
 
 
-<a id="org83139ae"></a>
+<a id="org5f12c69"></a>
 
 ### Unordered set
 
@@ -443,7 +474,7 @@ Unordered set has no duplicate elements. Value of the key cannot be modified.
 There is no random access, no [] operator.
 
 
-<a id="orgbef8ad8"></a>
+<a id="org7fcb83b"></a>
 
 ### Unordered multiset
 
@@ -452,14 +483,14 @@ Takes more space compared to unordered set.
 No random access, no [] operator.
 
 
-<a id="orgde4d982"></a>
+<a id="orgb910db4"></a>
 
 ### Unordered map
 
 Unordered set of pairs. 
 
 
-<a id="org435f962"></a>
+<a id="orge915d5b"></a>
 
 ### Unordered multimap
 
@@ -467,7 +498,7 @@ Unordered map that allows duplicated keys. Uses chaining or some sort of probing
 No random acesss, no [] operator. 
 
 
-<a id="org899a051"></a>
+<a id="org2f8a3d6"></a>
 
 ## Associative arrays
 
@@ -478,7 +509,7 @@ No random acesss, no [] operator.
     3.  Can't use multimap and unordered multimap as they don't have [] operator.
 
 
-<a id="org3f4406c"></a>
+<a id="org4b3d942"></a>
 
 ## Container Adaptor
 
@@ -486,28 +517,28 @@ Provide a restricted interface to meet special needs.
 Implemented with fundamental container classes
 
 
-<a id="orgd0bce67"></a>
+<a id="orgf3d09c5"></a>
 
 ### Stack
 
 LIFO, push(), pop(), top()
 
 
-<a id="orgfe52ae5"></a>
+<a id="orge4a6a3c"></a>
 
 ### Queue
 
 FIFO, push(), pop(), front(), back()
 
 
-<a id="org9e1fc78"></a>
+<a id="org73e52cd"></a>
 
 ### Priority queue
 
 push(), pop(), top()
 
 
-<a id="org272040e"></a>
+<a id="orge551bb6"></a>
 
 # Algorithm
 
@@ -522,14 +553,60 @@ There are some common APIs provided by all containers
 5.  .swap()
 
 
-<a id="org842fde1"></a>
+<a id="org97667a4"></a>
 
-## sort()
+## Common Vector Algorithms
+
+These algorithms are not limited to vectors but are most commonly used with them.
+
+
+<a id="orged791df"></a>
+
+### `sort()`
 
 This algorithm takes two iterators and sorts all the elements in the range between the two iterators.
 
 
-<a id="org72e161e"></a>
+<a id="org9d2feab"></a>
+
+### `min_element()`
+
+returns the minimum element in the range between the iterators given in the arguments.
+
+
+<a id="orge984f97"></a>
+
+### `reverse()`
+
+Reverses the elements between the given range
+
+
+<a id="org33de578"></a>
+
+### `copy()`
+
+Copy from source to destination
+
+    vector<int> vec2(3);
+    copy(itr, vec.end(), // Source
+         vec2.begin()); // Destination
+
+
+<a id="orgedd8872"></a>
+
+### `insert()`
+
+    vec3.insert(vec3.end(), itr, vec.end());
+
+
+<a id="orge3bf987"></a>
+
+### `find_if()`
+
+    vector<int>::iterator itr = find_if(vec.begin(), vec.end(), isOdd); // where isOdd is a function
+
+
+<a id="org0d24f4a"></a>
 
 # Functors
 
