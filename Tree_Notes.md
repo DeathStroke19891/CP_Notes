@@ -450,9 +450,9 @@ Example of a binary search tree
 
 ```
             4
-        / \
-        2   6
-        / \ / \
+           / \
+          2   6
+         / \ / \
         1  3 5  7
 ```
 
