@@ -10,6 +10,8 @@
 | 6       | [Binary Tree Traversals](#6-binary-tree-traversals)         |
 | 7       | [Binary Search Tree](#7-binary-search-tree)                 |
 
+---
+
 # 1. Introduction to Trees
 
 A tree is a non-linear data structure that is used to store data in a hierarchical manner. It is a collection of nodes connected by edges.
@@ -686,3 +688,198 @@ Node* LCA(Node* root, Node* p, Node* q) {
     return root;
 }
 ```
+
+## 5. Balancing a BST
+
+A binary search tree is said to be balanced if the height of the left and right subtrees of every node differ by at most one.
+Given a binary search tree, we can balance it by constructing a new balanced binary search tree from the given binary search tree.
+
+**Algorithm** :
+Input - root node
+Output - balanced root node
+
+1. First, we will store the inorder traversal of the binary search tree in an array.
+2. Then, we will construct a new balanced binary search tree from the inorder traversal array using the following steps:
+   - Find the middle element of the array and make it the root of the new tree.
+   - Recursively construct the left subtree from the left part of the array.
+   - Recursively construct the right subtree from the right part of the array.
+
+```cpp
+Node* balanceBST(Node* root) {
+    vector<int> inorder;
+    inorderTraversal(root, inorder);
+    return constructBalancedBST(inorder, 0, inorder.size() - 1);
+}
+
+void inorderTraversal(Node* root, vector<int>& inorder) {
+    if (root == NULL) return;
+    inorderTraversal(root->left, inorder);
+    inorder.push_back(root->data);
+    inorderTraversal(root->right, inorder);
+}
+
+Node* constructBalancedBST(vector<int>& inorder, int start, int end) {
+    if (start > end) return NULL;
+    int mid = start + (end - start) / 2;
+    Node* root = new Node(inorder[mid]);
+    root->left = constructBalancedBST(inorder, start, mid - 1);
+    root->right = constructBalancedBST(inorder, mid + 1, end);
+    return root;
+}
+```
+
+## 6. Convert a binary search tree to a sorted doubly linked list
+
+The advantage of a binary search tree is that it can be used to create a sorted doubly linked list efficiently.
+
+- In the doubly linked list format, the left pointer of the node will point to the previous node in the sorted order, and the right pointer will point to the next node in the sorted order.
+
+**Algorithm** :
+Input - root node
+Output - head of the sorted doubly linked list
+
+1. We will perform an inorder traversal of the binary search tree.
+2. While performing the inorder traversal, we will keep track of the previous node.
+3. For each node, we will set the left pointer to the previous node and the right pointer to the next node.
+4. Finally, we will return the head of the doubly linked list.
+
+```cpp
+Node* treeToDoublyList(Node* root) {
+    if (root == NULL) return NULL;
+    Node* head = NULL;
+    Node* prev = NULL;
+    inorder(root, prev, head);
+    prev->right = head;
+    head->left = prev;
+    return head;
+}
+
+void inorder(Node* root, Node*& prev, Node*& head) {
+    if (root == NULL) return;
+    inorder(root->left, prev, head);
+    if (prev == NULL) {
+        head = root;
+    } else {
+        prev->right = root;
+        root->left = prev;
+    }
+    prev = root;
+    inorder(root->right, prev, head);
+}
+```
+
+Example
+Let the BST be like this:
+
+```
+        4
+       / \
+      2   6
+     / \ / \
+    1  3 5  7
+```
+
+After converting to doubly linked list, it will be like this:
+
+```
+1 <-> 2 <-> 3 <-> 4 <-> 5 <-> 6 <-> 7
+```
+
+## 7. Finding kth smallest element in a BST ( Order statistics of BST)
+
+We can find the kth smallest element in a BST by performing an inorder traversal of the BST and keeping track of the count of nodes visited.
+
+**Algorithm** :
+Input - root node, k
+Output - kth smallest element
+
+1. Perform an inorder traversal of the BST.
+2. While performing the inorder traversal, keep track of the count of nodes visited.
+3. When the count reaches k, return the current node.
+
+```cpp
+Node* kthSmallest(Node* root, int& k) {
+    if (root == NULL)
+        return NULL;
+    Node* left = kthSmallest(root->left, k);
+
+    if (left != NULL)
+        return left;
+
+    k--;
+    if (k == 0)
+        return root;
+
+    return kthSmallest(root->right, k);
+}
+```
+
+## 8. Merging two BSTs into one BST in limited space
+
+the idea is to use iterative inorder traversal of both trees and merge the elements in sorted order.
+
+**Algorithm** :
+
+1. Consider two stacks s1 and s2 which stores the elements of two trees
+2. Store the left view value of a tree1 in s1 and of tree2 in s2.
+   Compare the top values present in the stack and push the value accordingly in the result vector.
+   - If s2 is empty then pop s1 and put the popped node value in the answer vector
+   - Else if both s1 and s2 are not empty then compare their top nodes’ value if s1.top()->val <= s2.top()->val then in this case push the s1.top()->val in the result vector and push its right child in the stack s1.
+   - If s1 is empty then pop s2 and put the popped node value in the answer vector.
+   - Else if both s1 and s2 are not empty then compare their top nodes’ value if `s2.top()->val >= s1.top()->val` then in this case push the `s2.top()->val` in the result vector and push its right child in the stack s2.
+   - Loop while there are nodes not yet printed. The nodes may be in the stack(explored, but not printed) or maybe not yet explored
+
+```cpp
+
+Node* constructBalancedBST(vector<int>& inorder, int start, int end) {
+    if (start > end) return NULL;
+    int mid = start + (end - start) / 2;
+    Node* root = new Node(inorder[mid]);
+    root->left = constructBalancedBST(inorder, start, mid - 1);
+    root->right = constructBalancedBST(inorder, mid + 1, end);
+    return root;
+}
+
+Node* mergeTrees(Node* root1, Node* root2) {
+    stack<Node*> s1, s2;
+    Node* current1 = root1;
+    Node* current2 = root2;
+    vector<int> result;
+    while (current1 != NULL || current2 != NULL || !s1.empty() || !s2.empty())
+    {
+        while (current1 != NULL)
+        {
+            s1.push(current1);
+            current1 = current1->left;
+        }
+        while (current2 != NULL)
+        {
+            s2.push(current2);
+            current2 = current2->left;
+        }
+        if (s2.empty() || (!s1.empty() && s1.top()->data <= s2.top()->data))
+        {
+            current1 = s1.top();
+            s1.pop();
+            result.push_back(current1->data);
+            current1 = current1->right;
+        }
+        else
+        {
+            current2 = s2.top();
+            s2.pop();
+            result.push_back(current2->data);
+            current2 = current2->right;
+        }
+    }
+    return constructBalancedBST(result, 0, result.size() - 1);
+}
+```
+
+What does the above code do ?
+
+- It first pushes the leftmost nodes of both trees into the stack.
+- Then it compares the top nodes of both stacks and pushes the smaller one into the result vector.
+- If s1 is empty then it pops s2 and puts the popped node value in the result vector.
+- if s2 is empty then it pops s1 and puts the popped node value in the result vector.
+- once both the stacks are empty and the result vector is filled with the inorder traversal of the merged tree, we construct the balanced BST from the result vector.

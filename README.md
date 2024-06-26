@@ -13,10 +13,12 @@ This repository contains the notes for Interview Preparation for SDE interviews.
 
 ## Index
 
-| Topic                     | Link                           |
-| ------------------------- | ------------------------------ |
-| Standard Template Library | [STL NOTES](./STL_Notes.md)    |
-| Trees                     | [TREES NOTES](./Tree_Notes.md) |
+| Topic                     | Link                                |
+| ------------------------- | ----------------------------------- |
+| Standard Template Library | [STL NOTES](./STL_Notes.md)         |
+| Trees                     | [TREES NOTES](./Tree_Notes.md)      |
+| Graphs                    | [GRAPHS NOTES](./Graph_Notes.md)    |
+| Algorithms                | [ALGO NOTES](./Algorithms_Notes.md) |
 
 ## Usage
 
