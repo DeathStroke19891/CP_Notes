@@ -199,3 +199,82 @@ void dfs(vector<int> adj[], int V, int S) {
 2. Solving Puzzles with only one solution.
 3. Path Finding.
 4. Detecting Cycles in a Graph.
+
+## 3. Finding All Ancestors in a Directed Acyclic Graph (DAG) - [Problem Link](https://leetcode.com/problems/all-ancestors-of-a-node-in-a-directed-acyclic-graph/description)
+
+When given a positive integer `n` and `vector<vector<int>> edges` representing a directed acyclic graph, return a list of all the ancestors of all the nodes in the graph. The list must be sorted in ascending order.
+
+```cpp
+class Solution {
+public:
+    void dfs(vector<bool>& visited, vector<vector<int>>& adjList, vector<vector<int>>& ancestor ,int parent, int curr)
+    {
+        visited[curr] = true;
+        for( int forward:adjList[curr])
+        {
+            if(!visited[forward])
+            {
+                ancestor[forward].push_back(parent);
+                dfs(visited,adjList,ancestor,parent,forward);
+            }
+        }
+    }
+
+    vector<vector<int>> getAncestors(int n, vector<vector<int>>& edges) {
+        std::ios::sync_with_stdio(false);
+        cin.tie(nullptr);
+        cout.tie(nullptr);
+        vector<vector<int>> adjList(n);
+        vector<vector<int>> ancestor(n);
+
+        for (const auto& edge : edges) {
+            adjList[edge[0]].push_back(edge[1]);
+        }
+
+
+        for(int i = 0; i<n; i++){
+            vector<bool>visited(n,false);
+            dfs(visited,adjList,ancestor,i,i);
+        }
+
+        // No need to sort again as the answer itself is sorted.
+        //for(int i = 0;i <n; i++)
+            //sort(ancestor[i].begin(),ancestor[i].end());
+
+        return ancestor;
+
+    }
+};
+```
+
+Here we use DFS traversal to build the ancestor list for each of the nodes in the graph.
+We use `Adjacency List` to store the graph and `ancestor` to store the ancestors of each node.
+
+**Algorithm**:
+
+1. Create an adjacency list to store the graph.
+2. Create a vector of vectors `ancestor` to store the ancestors of each node.
+3. For each node in the graph, do the following:
+   - Create a visited array and call the DFS function.
+   - In the DFS function, mark the current node as visited and for each adjacent node, if it is not visited, mark it as visited and push the parent node into the ancestor list.
+4. Return the ancestor list.
+
+**Algorithm for DFS**:
+Input: Graph in form of adjacency list, visited array, ancestor array, parent node, current node
+Output: Ancestor list for each node
+
+1. First mark the current node as visited.
+2. For each adjacent node of the current node, do the following:
+   - If the adjacent node is not visited, mark it as visited and push the parent node into the ancestor list of the adjacent node.
+   - Call the DFS function recursively for the adjacent node.
+
+**Time Complexity**:
+
+- The time complexity of the above solution is `O(V + E)`, where `V` is the number of vertices and `E` is the number of edges in the graph.
+- This is because we call the DFS function for each node in the graph.
+- And each node may be connected to at most `V-1` other nodes.
+
+**Space Complexity**:
+
+- The space complexity of the above solution is `O(V + E)`.
+- This is because we use an adjacency list to store the graph and a vector of vectors to store the ancestors of each node.
