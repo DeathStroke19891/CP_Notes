@@ -216,7 +216,9 @@ void dfs(vector<int> adj[], int V, int S) {
 3. Path Finding.
 4. Detecting Cycles in a Graph.
 
-## 3. Finding All Ancestors in a Directed Acyclic Graph (DAG) - [Problem Link](https://leetcode.com/problems/all-ancestors-of-a-node-in-a-directed-acyclic-graph/description)
+## 3. Finding All Ancestors in a Directed Acyclic Graph (DAG)
+
+- [Problem Link](https://leetcode.com/problems/all-ancestors-of-a-node-in-a-directed-acyclic-graph/description)
 
 - [Solution](https://kts-o7.github.io/blog/posts/problem-all-ancestors-of-a-node-in-a-dag/)
 - When given a positive integer `n` and `vector<vector<int>> edges` representing a directed acyclic graph, return a list of all the ancestors of all the nodes in the graph. The list must be sorted in ascending order.
