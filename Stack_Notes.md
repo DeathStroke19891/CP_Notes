@@ -32,6 +32,14 @@
 
 ---
 
+## [Very very irritating variations](#peculiar-ass-problems)
+
+| Sl.No | Topic                                                                                                                                                 |
+| ----- | ----------------------------------------------------------------------------------------------------------------------------------------------------- |
+| 1     | [Designing a stack that supports getMin() in O(1) time and O(1) extra space](#1-designing-a-stack-that-supports-getmin-in-o1-time-and-o1-extra-space) |
+
+---
+
 ## Stack
 
 - What is Stack?
@@ -276,3 +284,111 @@ public:
 
 **Time Complexity: O(n)**
 **Space Complexity: O(n)**
+
+---
+
+## Peculiar Ass problems
+
+### 1. Designing a stack that supports getMin() in O(1) time and O(1) extra space
+
+> This was asked in Arcesium Interview for our classmate. He asked WTH is that.
+
+```
+Input: Consider the following SpecialStack
+
+16  –> TOP
+15
+29
+19
+18
+
+When getMin() is called it should return 15,
+which is the minimum element in the current stack.
+
+If we do pop two times on stack, the stack becomes
+
+29  –> TOP
+19
+18
+
+When getMin() is called, it should return 18
+which is the minimum in the current stack.
+```
+
+- Approach:
+  We will be writing the new minimum encountered as a function of the previous minimum already present in the stack.
+
+Define a variable `currentMiniumum` which will store the current minimum of the stack.
+
+We obtain problems in two steps. While pushing and popping.
+
+**Algorithm to push**:
+
+- Consider element = x
+- if the stack is empty, push the element into the stack and `currentMinimum` = element.
+- if the stack is NOT empty, compare the element to `currentMinimum`.
+  - if its greater than or equal to `currentMinimum`, just push it on the stack.
+  - If is less than the `currentMinimum` then we need to push `2*x - currentMinimum` on the stack and update `currentMinimum = x`.
+
+**Algorithm to pop**:
+
+- Remove the top element from the stack. Let it be y.
+- If y is greater than or equal to `currentMinimum`, then the minimum element in the stack is still `currentMinimum`.
+- If y is less than `currentMinimum`, it means we are actually popping the `currentMinimum` element. So we need to find the next minimum present in the stack.
+- we had calculated the element to push as `y = 2*x - previousMinimum`. So, if we have to find the previous minimum, we can use the formula `previousMinimum = 2*x - y`.
+- Now we can use this as `currentMinimum = previousMinimum`.
+
+```cpp
+class SpecialStack {
+private:
+    stack<int> st;
+    int currentMinimum;
+public:
+    void push(int x) {
+        if (st.empty()) {
+            st.push(x);
+            currentMinimum = x;
+        } else {
+            if (x >= currentMinimum) {
+                st.push(x);
+            } else {
+                st.push(2*x - currentMinimum);
+                currentMinimum = x;
+            }
+        }Input: Consider the following SpecialStack
+
+16  –> TOP
+15
+29
+19
+18
+
+When getMin() is called it should return 15,
+which is the minimum element in the current stack.
+
+If we do pop two times on stack, the stack becomes
+
+29  –> TOP
+19
+18
+
+When getMin() is called, it should return 18
+which is the minimum in the current stack.
+    }
+
+    void pop() {
+        if (st.empty()) {
+            return;
+        }
+        int y = st.top();
+        st.pop();
+        if (y < currentMinimum) {
+            currentMinimum = 2*currentMinimum - y;
+        }
+    }
+
+    int getMin() {
+        return currentMinimum;
+    }
+};
+```
