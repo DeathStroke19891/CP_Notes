@@ -355,26 +355,8 @@ public:
                 st.push(2*x - currentMinimum);
                 currentMinimum = x;
             }
-        }Input: Consider the following SpecialStack
-
-16  –> TOP
-15
-29
-19
-18
-
-When getMin() is called it should return 15,
-which is the minimum element in the current stack.
-
-If we do pop two times on stack, the stack becomes
-
-29  –> TOP
-19
-18
-
-When getMin() is called, it should return 18
-which is the minimum in the current stack.
-    }
+        }
+            }
 
     void pop() {
         if (st.empty()) {
@@ -392,3 +374,67 @@ which is the minimum in the current stack.
     }
 };
 ```
+
+Input: Consider the following SpecialStack
+
+16 –> TOP
+15
+29
+19
+18
+
+When getMin() is called it should return 15,
+which is the minimum element in the current stack.
+
+If we do pop two times on stack, the stack becomes
+
+29 –> TOP
+19
+18
+
+When getMin() is called, it should return 18
+which is the minimum in the current stack.
+
+#### There is a more sane way of doing this
+
+We can use an auxiliary stack to store the minimum element at each level of the main stack.
+
+```cpp
+class MinStack {
+public:
+    stack<int> s;
+    stack<int> mins;
+    MinStack() {
+
+    }
+
+    void push(int val) {
+        if(mins.empty() || mins.top()>=val){
+            s.push(val);
+            mins.push(val);
+        }
+        else
+            s.push(val);
+    }
+
+    void pop() {
+        if(s.top()==mins.top()){
+            s.pop();
+            mins.pop();
+        }
+        else
+            s.pop();
+    }
+
+    int top() {
+        return s.top();
+    }
+
+    int getMin() {
+        return mins.top();
+    }
+};
+```
+
+This implementation uses extra space. The second stack keeps track of the minimum till that level.
+We pop the `min` stack when the top of normal stack matches with `min` stack.
