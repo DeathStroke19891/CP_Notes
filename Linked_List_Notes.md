@@ -355,6 +355,8 @@ Circular linked list is a linked list where all nodes are connected to form a ci
 
 **For this notes we are using a Singly Circular Linked List**
 
+- We always get a reference to the head node.
+
 **We are assuming the following class for the Node**
 
 ```cpp
@@ -376,3 +378,183 @@ class Node*{
         }
 }
 ```
+
+## 2.1 Operations on Circular Linked Lists
+
+Thes are the following operations that can be performed on a circular linked list:
+
+### 2.1.1 Insertion
+
+A node can be inserted in 3 ways to a CLL, at the beginning, at the end, and at any position.
+
+- **Insertion at the beginning**
+  - Create a new node.
+  - Traverse till the last node. (last->next = head)
+  - Insert the new node at the beginning. (new->next = head, last->next = new)
+  - return the new head.
+
+```cpp
+Node* insertAtBeginning(Node* head, int val){
+    Node* newNode = new Node(val);
+    if(head == nullptr){
+        newNode->next = newNode;
+        return newNode;
+    }
+    Node* last = head;
+    while(last->next != head){
+        last = last->next;
+    }
+    newNode->next = head;
+    last->next = newNode;
+    return newNode;
+}
+```
+
+- **Insertion at the end**
+  - Create a new node.
+  - Traverse till the last node. (last->next = head)
+  - Insert the new node at the end. (new->next = head, last->next = new)
+  - return the head.
+
+```cpp
+Node* insertAtEnd(Node* head, int val){
+    Node* newNode = new Node(val);
+    if(head == nullptr){
+        newNode->next = newNode;
+        return newNode;
+    }
+    Node* last = head;
+    while(last->next != head){
+        last = last->next;
+    }
+    newNode->next = head;
+    last->next = newNode;
+    return head;
+}
+```
+
+- **Insertion at any position**
+  - Create a new node.
+  - Traverse till the position.
+  - Make the new node point to pos->next.
+  - Make the pos point to the new node.
+
+```cpp
+Node* insertAtPosition(Node* head, int val, int pos){
+    Node* newNode = new Node(val);
+    if(head == nullptr){
+        newNode->next = newNode;
+        return newNode;
+    }
+    Node* temp = head;
+    for(int i=0; i<pos-1; i++){
+        temp = temp->next;
+    }
+    newNode->next = temp->next;
+    temp->next = newNode;
+    return head;
+}
+```
+
+### 2.1.2 Deletion
+
+We can delete a node from a CLL in 3 ways, from the beginning, from the end, and from any given key.
+
+- **Deletion from the beginning**
+  - Traverse till the last node. (last->next = head)
+  - Make the last node point to head->next.
+  - Delete the head node.
+  - return the new head.
+
+```cpp
+Node* deleteFromBeginning(Node* head){
+    if(head == nullptr){
+        return nullptr;
+    }
+    Node* last = head;
+    while(last->next != head){
+        last = last->next;
+    }
+    last->next = head->next;
+    delete head;
+    return last->next;
+}
+```
+
+- **Deletion from the end**
+  - Traverse till the last node. (last->next = head)
+  - Traverse till the second last node. (temp->next != last)
+  - Make the second last node point to head.
+  - Delete the last node.
+  - return the head.
+
+```cpp
+Node* deleteFromEnd(Node* head){
+    if(head == nullptr){
+        return nullptr;
+    }
+    Node* last = head;
+    while(last->next != head){
+        last = last->next;
+    }
+    Node* temp = head;
+    while(temp->next != last){
+        temp = temp->next;
+    }
+    temp->next = head;
+    delete last;
+    return head;
+}
+```
+
+- **Deletion based on key**
+  - Keep track of previous and current nodes.
+  - Traverse till the key is found.
+  - Make the previous node point to the next of the current node.
+  - Delete the current node.
+  - return the head.
+
+```cpp
+Node* deleteNode(Node* head, int key){
+    if(head == nullptr){
+        return nullptr;
+    }
+    Node* temp = head;
+    Node* prev = nullptr;
+    while(temp->val != key){
+        if(temp->next == head){
+            return head;
+        }
+        prev = temp;
+        temp = temp->next;
+    }
+    if(temp == head){
+        prev = head;
+        while(prev->next != head){
+            prev = prev->next;
+        }
+        head = head->next;
+        prev->next = head;
+        delete temp;
+    }
+    else{
+        prev->next = temp->next;
+        delete temp;
+    }
+    return head;
+}
+```
+
+### Advantages of Circular Linked List
+
+1. Any node can be a starting point.
+2. Useful for applications where the last node is to be connected to the first node.
+3. Useful for implementing a round-robin scheduling algorithm.
+4. Circular doubly linked lists are used for implementation of advanced data structures like Fibonacci Heap.
+
+### Disadvantages of Circular Linked List
+
+1. Traversal is more complex than singly linked lists.
+2. More complex to implement than singly linked lists.
+3. More complex to delete a node than singly linked lists.
+4. More complex to find the length of the linked list than singly linked lists.

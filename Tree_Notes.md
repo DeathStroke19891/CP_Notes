@@ -3,12 +3,35 @@
 | Sl. No. | Topic                                                       |
 | ------- | ----------------------------------------------------------- |
 | 1       | [Introduction to Trees](#1-introduction-to-trees)           |
-| 2       | [Basic Terminologies](#basic-terminologies)                 |
+| 2       | [Basic Terminologies](#2-basic-terminologies)               |
 | 3       | [Binary Tree](#3-binary-tree)                               |
 | 4       | [Types of Binary Trees](#4-types-of-binary-trees)           |
 | 5       | [Operations on Binary Trees](#5-operations-on-binary-trees) |
 | 6       | [Binary Tree Traversals](#6-binary-tree-traversals)         |
 | 7       | [Binary Search Tree](#7-binary-search-tree)                 |
+
+---
+
+# Subtopics
+
+| Sl No | Subtopic                                                                                                                                    |
+| ----- | ------------------------------------------------------------------------------------------------------------------------------------------- |
+| 1     | [Finding node with minimum value in a BST](#1-finding-node-with-minimum-value-in-a-bst)                                                     |
+| 2     | [Find the inorder predecessor and successor of a given key in a BST](#2-find-the-inorder-predecessor-and-successor-of-a-given-key-in-a-bst) |
+| 3     | [Check if a binary tree is a BST](#3-check-if-a-binary-tree-is-a-bst)                                                                       |
+| 4     | [Lowest Common Ancestor in a BST](#4-lowest-common-ancestor-in-a-bst)                                                                       |
+| 5     | [Balancing a BST](#5-balancing-a-bst)                                                                                                       |
+| 6     | [Convert a binary search tree to a sorted doubly linked list](#6-convert-a-binary-search-tree-to-a-sorted-doubly-linked-list)               |
+| 7     | [Finding kth smallest element in a BST ( Order statistics of BST)](#7-finding-kth-smallest-element-in-a-bst--order-statistics-of-bst)       |
+| 8     | [Merging two BSTs into one BST in limited space](#8-merging-two-bsts-into-one-bst-in-limited-space)                                         |
+
+---
+
+# Some important questions
+
+| Sl No | Question                                    |
+| ----- | ------------------------------------------- |
+| 1     | [Serialize and Deserialize a Binary Tree]() |
 
 ---
 
@@ -20,7 +43,7 @@ Each node will contain a data element and a list of references to other nodes (c
 There are different types of trees like Binary Tree, Binary Search Tree, AVL Tree, etc.
 Trees are used to represent hierarchical data like file systems, organization structure, etc. Trees are a subset of Graphs.
 
-## Basic Terminologies
+## 2. Basic Terminologies
 
 - **Node**: A node is a basic unit of a tree. It contains data and references to other nodes.
 - **Root**: The topmost node in a tree is called the root node.
@@ -883,3 +906,115 @@ What does the above code do ?
 - If s1 is empty then it pops s2 and puts the popped node value in the result vector.
 - if s2 is empty then it pops s1 and puts the popped node value in the result vector.
 - once both the stacks are empty and the result vector is filled with the inorder traversal of the merged tree, we construct the balanced BST from the result vector.
+
+---
+
+# Some more problems
+
+> Just found these really intresting problems and thought of adding them here.
+
+## 1. Serialize and Deserialize a Binary Tree
+
+- You can find the problem [here](https://leetcode.com/problems/serialize-and-deserialize-binary-tree/description/)
+
+The following solution is pretty much rudimentary. It shows how [`Level Order Traversal`](#5-level-order-traversal) can be used to serialize and deserialize a binary tree.
+
+```cpp
+/**
+ * Definition for a binary tree node.
+ * struct TreeNode {
+ *     int val;
+ *     TreeNode *left;
+ *     TreeNode *right;
+ *     TreeNode(int x) : val(x), left(NULL), right(NULL) {}
+ * };
+ */
+
+class Codec {
+public:
+    string serialize(TreeNode* root) {
+        string ans = "";
+        TreeNode* temp = root;
+        queue<TreeNode*>q;
+        q.push(temp);
+        while(!q.empty())
+        {
+            for(int i = 0; i<q.size(); i++)
+            {
+                if(q.front() != nullptr)
+                {
+                    ans+=to_string(q.front()->val);
+                    ans+='#';
+                    q.push(q.front()->left);
+                    q.push(q.front()->right);
+                }
+                else
+                {
+                    ans+="null#";
+                }
+                q.pop();
+            }
+        }
+        return ans;
+
+    }
+
+TreeNode* deserialize(string data) {
+    vector<string> nodes;
+    int l = 0, r = 0;
+    while (l < data.size()) {
+        while (r < data.size() && data[r] != '#') {
+            r++;
+        }
+        nodes.push_back(data.substr(l, r - l));
+        l = r + 1;
+        r = l;
+    }
+
+    if(nodes[0] == "null")
+        return nullptr;
+
+    TreeNode* root = new TreeNode(stoi(nodes[0]));
+    queue<TreeNode*>q;
+    q.push(root);
+    int ind = 1;
+
+    while(!q.empty())
+    {
+        TreeNode* curr = q.front();
+        q.pop();
+        if(nodes[ind]!="null")
+        {
+            TreeNode* temp = new TreeNode(stoi(nodes[ind]));
+            curr->left = temp;
+            q.push(temp);
+        }
+        else
+        {
+            curr->left = nullptr;
+        }
+        ind++;
+
+        if(nodes[ind]!="null")
+        {
+            TreeNode* temp = new TreeNode(stoi(nodes[ind]));
+            curr->right = temp;
+            q.push(temp);
+        }
+        else
+        {
+            curr->right = nullptr;
+        }
+        ind++;
+    }
+    return root;
+}
+
+};
+
+// Your Codec object will be instantiated and called as such:
+// Codec ser, deser;
+// TreeNode* ans = deser.deserialize(ser.serialize(root));
+```
+
+The idea is to add some delimiters so that we can keep track of node values and null values. The `serialize` function uses a queue to perform level order traversal and adds the node values to the string. The `deserialize` function splits the string into node values and null values and constructs the binary tree using a queue.
