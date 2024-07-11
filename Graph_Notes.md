@@ -1,11 +1,12 @@
 # Table of Contents
 
 | Sl. No. | Topic                                                   |
-| ------- | ------------------------------------------------------- |
+|---------|---------------------------------------------------------|
 | 1       | [Introduction to Graphs](#1-introduction-to-graphs)     |
 | 2       | [Representation of Graphs](#2-representation-of-graphs) |
 | 3       | [Graph Traversal](#3-graph-traversal)                   |
 | 4       | [Bipartite Graphs](#4-bipartite-graphs)                 |
+| 5       | [Disjoint Sets](#5-disjoint-sets)                       |
 
 ---
 
@@ -117,8 +118,8 @@ Output: Traversal of Graph G from Source Node S
 
 1. Create a `queue` and a `visited` boolean array.
 2. While the queue is not empty, do the following:
-   - Pop the front element of the queue and print it.
-   - Traverse all the adjacent nodes of the popped element and if they are not visited, mark them as visited and push them into the queue.
+- Pop the front element of the queue and print it.
+- Traverse all the adjacent nodes of the popped element and if they are not visited, mark them as visited and push them into the queue.
 
 - `int V` : Number of vertices in the graph.
 - `vector<int> adj[]` : Adjacency List.
@@ -172,8 +173,8 @@ Output: Traversal of Graph G from Source Node S
 1. Create a `stack` and a `visited` boolean array.
 2. Push the source node into the stack and mark it as visited.
 3. While the stack is not empty, do the following:
-   - Pop the top element of the stack and print it.
-   - Traverse all the adjacent nodes of the popped element and if they are not visited, mark them as visited and push them into the stack.
+- Pop the top element of the stack and print it.
+- Traverse all the adjacent nodes of the popped element and if they are not visited, mark them as visited and push them into the stack.
 
 - `int V` : Number of vertices in the graph.
 - `vector<int> adj[]` : Adjacency List.
@@ -226,8 +227,8 @@ void dfs(vector<int> adj[], int V, int S) {
 ```cpp
 class Solution {
 public:
-    void dfs(vector<bool>& visited, vector<vector<int>>& adjList, vector<vector<int>>& ancestor ,int parent, int curr)
-    {
+void dfs(vector<bool>& visited, vector<vector<int>>& adjList, vector<vector<int>>& ancestor ,int parent, int curr)
+{
         visited[curr] = true;
         for( int forward:adjList[curr])
         {
@@ -274,8 +275,8 @@ We use `Adjacency List` to store the graph and `ancestor` to store the ancestors
 1. Create an adjacency list to store the graph.
 2. Create a vector of vectors `ancestor` to store the ancestors of each node.
 3. For each node in the graph, do the following:
-   - Create a visited array and call the DFS function.
-   - In the DFS function, mark the current node as visited and for each adjacent node, if it is not visited, mark it as visited and push the parent node into the ancestor list.
+- Create a visited array and call the DFS function.
+- In the DFS function, mark the current node as visited and for each adjacent node, if it is not visited, mark it as visited and push the parent node into the ancestor list.
 4. Return the ancestor list.
 
 **Algorithm for DFS**:
@@ -284,8 +285,8 @@ Output: Ancestor list for each node
 
 1. First mark the current node as visited.
 2. For each adjacent node of the current node, do the following:
-   - If the adjacent node is not visited, mark it as visited and push the parent node into the ancestor list of the adjacent node.
-   - Call the DFS function recursively for the adjacent node.
+- If the adjacent node is not visited, mark it as visited and push the parent node into the ancestor list of the adjacent node.
+- Call the DFS function recursively for the adjacent node.
 
 **Time Complexity**:
 
@@ -309,9 +310,9 @@ Output: Ancestor list for each node
 - Create a recursive dfs function that takes the current node, parent node, visited array, and recursion stack as arguments.
 - Mark the current node as visited and push it into the recursion stack.
 - For each adjacent node of the current node, do the following:
-  - If the adjacent node is not visited, call the dfs function recursively for the adjacent node.
-  - If the adjacent node is visited and is not the parent of the current node, then there is a cycle in the graph.
-  - If there is a cycle, return true.
+- If the adjacent node is not visited, call the dfs function recursively for the adjacent node.
+- If the adjacent node is visited and is not the parent of the current node, then there is a cycle in the graph.
+- If there is a cycle, return true.
 - After the loop, pop the current node from the recursion stack.
 - Return false.
 
@@ -374,16 +375,16 @@ If we encounter a node that is already in the recursion stack, then there is a c
 
 1. Input: Graph G, Number of vertices V, Edges E
 2. Output: True if the graph has a cycle, False otherwise
-   - Create an adjacency list to store the graph.
-   - Create an indegree array to store the indegree of each node.
-   - Create a queue to store the nodes with indegree 0.
-   - Initialize the indegree array and the queue.
-   - While the queue is not empty, do the following:
-     - Pop the front element of the queue and increment the count of visited nodes.
-     - Traverse all the adjacent nodes of the popped element and decrement their indegree.
-     - If the indegree of any adjacent node becomes 0, push it into the queue.
-     - If the count of visited nodes is not equal to the number of vertices, return true.
-     - Otherwise, return false.
+- Create an adjacency list to store the graph.
+- Create an indegree array to store the indegree of each node.
+- Create a queue to store the nodes with indegree 0.
+- Initialize the indegree array and the queue.
+- While the queue is not empty, do the following:
+- Pop the front element of the queue and increment the count of visited nodes.
+- Traverse all the adjacent nodes of the popped element and decrement their indegree.
+- If the indegree of any adjacent node becomes 0, push it into the queue.
+- If the count of visited nodes is not equal to the number of vertices, return true.
+- Otherwise, return false.
 
 ```cpp
 class Solution {
@@ -494,7 +495,7 @@ If the `dfs` function completes without finding a cycle, then return false.
 
 - Given a Weighted Directed Acyclic Graph (DAG) and a source vertex `s` in it, find the longest distances from `s` to all other vertices in the given graph.
 
-  > The longest path problem for a graph is a NP-Hard problem.
+> The longest path problem for a graph is a NP-Hard problem.
 
 However for DAG, we can find the longest path in `O(V+E)` time using topological sorting.
 
@@ -630,11 +631,11 @@ Here the top of the stack will be node with no outgoing edges.
 3. Create a queue to store the nodes with indegree 0.
 4. Initialize the indegree array and the queue.
 5. While the queue is not empty, do the following:
-   - Pop the front element of the queue and increment the count of visited nodes.
-   - Traverse all the adjacent nodes of the popped element and decrement their indegree.
-   - If the indegree of any adjacent node becomes 0, push it into the queue.
-   - If the count of visited nodes is not equal to the number of vertices, return an empty vector.
-   - Otherwise, return the topological order.
+- Pop the front element of the queue and increment the count of visited nodes.
+- Traverse all the adjacent nodes of the popped element and decrement their indegree.
+- If the indegree of any adjacent node becomes 0, push it into the queue.
+- If the count of visited nodes is not equal to the number of vertices, return an empty vector.
+- Otherwise, return the topological order.
 
 ```cpp
 class Solution {
@@ -677,7 +678,7 @@ public:
 ```
 
 - Here we are visiting each node once and each edge once.
-  **Time Complexity**: O(V+E)
+**Time Complexity**: O(V+E)
 
 > Topological sort is not unique. There can be multiple topological sorts for a given graph.
 
@@ -698,8 +699,8 @@ public:
 ```cpp
 class Solution {
 public:
-    bool isBipartite(int V, vector<vector<int>>& edges) {
-        vector<vector<int>> adj(V);
+bool isBipartite(int V, vector<vector<int>>& edges) {
+vector<vector<int>> adj(V);
         for (int i = 0; i < edges.size(); i++) {
             adj[edges[i][0]].push_back(edges[i][1]);
             adj[edges[i][1]].push_back(edges[i][0]);
@@ -789,3 +790,106 @@ class Solution {
     }
 };
 ```
+
+
+# 5. Disjoint Sets
+
+A disjoint-set data structure maintians a collection `S` = { `S1`, `S2`, ..., `Sk` } of disjoint dynammic sets. To identify each set, choose a representative, which is some member of the set.
+
+Each element of a set is represented by an object. Letting `x` denote the object, a disjoint-set supports the following opertations.
+
+1. `make_set(x)`
+2. `union(x,y)`
+3. `find_set(x)`
+
+## The Idea
+
+Given a list of edges, we can find if two nodes are connected in `O(1)` amortised time using disjoint sets. 
+
+1. Initially each node is in its own disjoint set and it is the representative element of itself. 
+2. For every new edge, the disjoint sets are combined dynammically using the union operation and a representative element for the new set is chosen. 
+3. This process is repeated till all the edges are processed.
+
+| Edge processed | Collection of disjoint sets                      |
+|----------------|--------------------------------------------------|
+| initial sets   | {a}   {b}   {c} {d} {e} {f} {g} {h} {i} {j}      |
+| (b,d)          | {a}   {b,d} {c}     {e} {f} {g} {h} {i} {j}      |
+| (e,f)          | {a}   {b,d} {c}     {e,f}   {g} {h} {i} {j}      |
+| (a,c)          | {a,c} {b,d}         {e,f}   {g} {h} {i} {j}      |
+| (h,i)          | {a,c} {b,d}         {e,f}   {g} {h,i}   {j}      |
+| (a,b)          | {a,b,c,d}           {e,f}   {g} {h,i}   {j}      |
+| (f,g)          | {a,b,c,d}           {e,f,g}     {h,i}   {j}      |
+| (b,c)          | {a,b,c,d}           {e,f,g}     {h,i}   {j}      |
+
+Finally given n queries, of form `query(a,b)` where `a` and `b` are nodes in the graph, we can check if they are connected by calling `find_set(a)` and `find_set(b)` and checking if they have the same representative element.
+
+## Implementations
+
+### Naive Implementation
+
+```cpp
+void make_set(int v) {
+    parent[v] = v;
+}
+
+int find_set(int v) {
+    if (v == parent[v])
+        return v;
+    return find_set(parent[v]);
+}
+
+void union_sets(int a, int b) {
+    a = find_set(a);
+    b = find_set(b);
+    if (a != b)
+        parent[b] = a;
+}
+```
+
+### Path Compression Optimisation and Union find by rank
+
+It has to be noted that, though path compression and union find by rank reduce the overall complexity of the structure, it might not be suitable for certain classes of problems.
+
+#### Path compression
+If we call find_set(v) for some vertex v, we actually find the representative p for all vertices that we visit on the path between v and the actual representative p. The trick is to make the paths for all those nodes shorter, by setting the parent of each visited vertex directly to p.
+```cpp
+int find_set(int v) {
+    if (v == parent[v])
+        return v;
+    return parent[v] = find_set(parent[v]);
+}
+```
+
+#### Union find by rank
+In this optimization we will change the union_set operation. To be precise, we will change which tree gets attached to the other one. In the naive implementation the second tree always got attached to the first one. In practice that can lead to trees containing chains of length  `O(n)` . With this optimization we will avoid this by choosing very carefully which tree gets attached.
+```cpp
+void make_set(int v) {
+    parent[v] = v;
+    rank[v] = 0;
+}
+
+
+void union_sets(int a, int b) {
+    a = find_set(a);
+    b = find_set(b);
+    if (a != b) {
+        if (rank[a] < rank[b])
+            swap(a, b);
+        parent[b] = a;
+        if (rank[a] == rank[b])
+            rank[a]++;
+    }
+}
+```
+
+
+
+## Applications of disjoint-set data structures
+
+One of the many applications of disjoint-set data structures arises in determining the connected components of an undirected graph. When the edges of the graph are static, [depth first search](#2-depth-first-search-dfs) can compute the connected components faster. Sometimes, however, the edges are added dynammically, with the connected components updated as each edge is added. In this case, a disjoint-set can be more efficient than running a new depth-first search for each new edge or query.
+
+### Additional problems
+
++ ![Colorful Arrays](https://www.spoj.com/problems/CLFLARR/)
++ ![Consecutive Letters](https://www.spoj.com/problems/CONSEC/)
++ ![Roads not only in Berland](http://codeforces.com/contest/25/problem/D)
