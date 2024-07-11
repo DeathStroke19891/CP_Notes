@@ -1,8 +1,9 @@
 # Table of Contents
 
-| Sl. No. | Topic                       |
-| ------- | --------------------------- |
-| 1.      | [Linked List](#linked-list) |
+| Sl. No. | Topic                                         |
+| ------- | --------------------------------------------- |
+| 1.      | [Linked List](#linked-list)                   |
+| 2.      | [Circular Linked List](#circular-linked-list) |
 
 ---
 
@@ -16,6 +17,17 @@
 | 1.4     | [Code snippets for various operations on a Singly Linked List](#14-code-snippets-for-various-operations-on-a-singly-linked-list) |
 | 1.5     | [Some tricky questions on Linked List](#15-some-tricky-questions-on-linked-list)                                                 |
 | ##      |
+
+---
+
+| Sl. No. | Topic                                                                                                     |
+| ------- | --------------------------------------------------------------------------------------------------------- |
+| 2.1     | [Operations on Circular Linked Lists](#21-operations-on-circular-linked-lists)                            |
+| 2.2     | [Advantages of Circular Linked List](#advantages-of-circular-linked-list)                                 |
+| 2.3     | [Disadvantages of Circular Linked List](#disadvantages-of-circular-linked-list)                           |
+| 2.4     | [Splitting a Circular Linked List into two halves](#213-splitting-a-circular-linked-list-into-two-halves) |
+
+---
 
 # Linked List
 
@@ -558,3 +570,336 @@ Node* deleteNode(Node* head, int key){
 2. More complex to implement than singly linked lists.
 3. More complex to delete a node than singly linked lists.
 4. More complex to find the length of the linked list than singly linked lists.
+
+### 2.1.3 Splitting a Circular Linked List into two halves
+
+If the number of nodes in the circular linked list is odd, then make the first half one node more than the second half.
+If the number of nodes in the circular linked list is even, then make the first half and the second half equal.
+
+**Algorithm**:
+
+1. Store the mid and last nodes of the circular linked list using `slow` and `fast` pointers.
+2. Make second half circular.
+3. Make first half circular.
+4. Return the heads of the two
+
+```cpp
+pair<Node*, Node*> splitList(Node* head){
+    if (!head || head->next == head) return {head, nullptr}; // Handle edge cases
+
+    Node* slow = head;
+    Node* fast = head;
+    // Loop to find the midpoint; also works for even-length lists
+    while(fast->next != head && fast->next->next != head){
+        slow = slow->next;
+        fast = fast->next->next;
+    }
+
+    // Adjust for even length lists
+    if(fast->next->next == head){
+        fast = fast->next;
+    }
+
+    Node* head1 = head;
+    Node* head2 = slow->next;
+    fast->next = head2; // Complete the circle for the second half
+    slow->next = head1; // Complete the circle for the first half
+
+    return {head1, head2};
+}
+```
+
+---
+
+# Doubly Linked List
+
+This is similar to a singly linked list, but each node has a reference to the previous node as well as the next node.
+
+**For this notes we are using a Doubly Linked List**
+
+```cpp
+class Node{
+    public:
+        int val;
+        Node* next;
+        Node* prev;
+        Node(){
+            this->val = 0;
+            this->next = nullptr;
+            this->prev = nullptr;
+        }
+        Node(int val){
+            this->val = val;
+            this->next = nullptr;
+            this->prev = nullptr;
+        }
+        Node(int val, Node* next, Node* prev){
+            this->val = val;
+            this->next = next;
+            this->prev = prev;
+        }
+};
+```
+
+## 1. Operations on Doubly Linked List
+
+### 1.1 Insertion
+
+1. **Insertion at the beginning**
+   - Create a new node.
+   - Make the new node point to the head.
+   - Make the head point to the new node.
+   - return the new head.
+
+```cpp
+Node* insertAtBeginning(Node* head, int val){
+    Node* newNode = new Node(val);
+    if(head == nullptr){
+        return newNode;
+    }
+    newNode->next = head;
+    head->prev = newNode;
+    return newNode;
+}
+```
+
+2. **Insertion at the end**
+   - Create a new node.
+   - Traverse till the last node.
+   - Make the last node point to the new node.
+   - Make the new node point to null.
+   - return the head.
+
+```cpp
+Node* insertAtEnd(Node* head, int val){
+    Node* newNode = new Node(val);
+    if(head == nullptr){
+        return newNode;
+    }
+    Node* temp = head;
+    while(temp->next != nullptr){
+        temp = temp->next;
+    }
+    temp->next = newNode;
+    newNode->prev = temp;
+    return head;
+}
+```
+
+3. **Insertion at any position**
+   - Create a new node.
+   - Traverse till the position.
+   - Make the new node point to pos->next.
+   - Make the pos point to the new node.
+   - return the head.
+
+```cpp
+Node* insertAtPosition(Node* head, int val, int pos){
+    Node* newNode = new Node(val);
+    if(head == nullptr){
+        return newNode;
+    }
+    Node* temp = head;
+    for(int i=0; i<pos-1; i++){
+        temp = temp->next;
+    }
+    newNode->next = temp->next;
+    temp->next->prev = newNode;
+    temp->next = newNode;
+    newNode->prev = temp;
+    return head;
+}
+```
+
+### 1.2 Deletion
+
+1. **Deletion from the beginning**
+   - Make the head point to the next node.
+   - Delete the previous head.
+   - return the new head.
+
+```cpp
+Node* deleteFromBeginning(Node* head){
+    if(head == nullptr){
+        return nullptr;
+    }
+    Node* temp = head;
+    head = head->next;
+    head->prev = nullptr;
+    delete temp;
+    return head;
+}
+```
+
+2. **Deletion from the end**
+   - Traverse till the last node.
+   - Make the second last node point to null.
+   - Delete the last node.
+   - return the head.
+
+```cpp
+Node* deleteFromEnd(Node* head){
+    if(head == nullptr){
+        return nullptr;
+    }
+    Node* temp = head;
+    while(temp->next != nullptr){
+        temp = temp->next;
+    }
+    temp->prev->next = nullptr;
+    delete temp;
+    return head;
+}
+```
+
+3. **Deletion based on key**
+   - Keep track of previous and current nodes.
+   - Traverse till the key is found.
+   - Make the previous node point to the next of the current node.
+   - Delete the current node.
+   - return the head.
+
+```cpp
+Node* deleteNode(Node* head, int key){
+    if(head == nullptr){
+        return nullptr;
+    }
+    Node* temp = head;
+    while(temp->val != key){
+        temp = temp->next;
+    }
+    if(temp->prev != nullptr){
+        temp->prev->next = temp->next;
+    }
+    if(temp->next != nullptr){
+        temp->next->prev = temp->prev;
+    }
+    delete temp;
+    return head;
+}
+```
+
+### 1.4 Reversing a Doubly Linked List
+
+**Algorithm**:
+
+1. Have two pointers `curr` and `temp`.
+2. Traverse the linked list and for each node:
+   - Swap the next and prev pointers.
+   - Move `temp` to `curr`.
+   - Move `curr` to `curr->next`.
+3. Return the head.
+
+```cpp
+Node* reverse(Node* head){
+    Node* curr = head;
+    Node* temp = nullptr;
+    while(curr != nullptr){
+        temp = curr->prev;
+        curr->prev = curr->next;
+        curr->next = temp;
+        curr = curr->prev;
+    }
+    if(temp != nullptr){
+        head = temp->prev;
+    }
+    return head;
+}
+```
+
+We can also reverse it using recursion.
+
+```cpp
+Node* reverse(Node* head){
+    if(head == nullptr || head->next == nullptr){
+        return head;
+    }
+    Node* temp = head->next;
+    head->next = head->prev;
+    head->prev = temp;
+    return reverse(temp);
+}
+```
+
+We can also reverse it using a stack.
+
+```cpp
+Node* reverse(Node* head){
+    stack<Node*> s;
+    Node* temp = head;
+    while(temp != nullptr){
+        s.push(temp);
+        temp = temp->next;
+    }
+    head = s.top();
+    temp = head;
+    s.pop();
+    while(!s.empty()){
+        temp->next = s.top();
+        s.top()->prev = temp;
+        temp = temp->next;
+        s.pop();
+    }
+    temp->next = nullptr;
+    return head;
+}
+```
+
+### 1.5 List-Tree conversion
+
+Given a binary tree , we can convert it into a doubly linked list.
+
+**Algorithm**:
+
+1. Convert the left subtree into a doubly linked list.
+2. Convert the right subtree into a doubly linked list.
+3. Make the left and right child of the root point to the left and right doubly linked lists.
+
+```cpp
+Node* treeToList(Node* root){
+    if(root == nullptr){
+        return nullptr;
+    }
+    if(root->left != nullptr){
+        Node* left = treeToList(root->left);
+        for(; left->next != nullptr; left = left->next);
+        left->next = root;
+        root->prev = left;
+    }
+    if(root->right != nullptr){
+        Node* right = treeToList(root->right);
+        for(; right->prev != nullptr; right = right->prev);
+        right->prev = root;
+        root->next = right;
+    }
+    return root;
+}
+```
+
+```
+Example:
+Input:
+        10
+       /  \
+      12   15
+     /  \    \
+    25  30   36
+
+Output: 25<->12<->30<->10<->36<->15
+```
+
+## 2. Advantages of Doubly Linked List
+
+1. Can be traversed in both directions.
+2. Can be used to implement advanced data structures like Fibonacci Heap.
+3. Can be used to implement advanced algorithms like LRU Cache.
+4. Can be used to implement advanced algorithms like Deque.
+
+## 3. Disadvantages of Doubly Linked List
+
+1. More memory is required as compared to singly linked lists.
+2. More complex to implement than singly linked lists.
+3. More complex to delete a node than singly linked lists.
+4. Circular doubly linked lists are more complex than singly linked lists counterparts.
+
+---
