@@ -827,6 +827,15 @@ Finally given n queries, of form `query(a,b)` where `a` and `b` are nodes in the
 
 ### Naive Implementation
 
+The naive implementation is a made by representing sets by rooted trees, with each node containing one member and each tree representing one set. In a disjoint-set forest, earch member points only to its parent. The root of each tree contains the representatitive and is its own parent.
+```
+    0             4
+   / \           / \
+  1   3         5   6
+  |             |   |
+  2             8   7
+```
+
 ```cpp
 void make_set(int v) {
     parent[v] = v;
