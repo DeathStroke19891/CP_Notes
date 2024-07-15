@@ -21,6 +21,7 @@ This repository contains the notes for Interview Preparation for SDE interviews.
 | Algorithms                | [ALGO NOTES](./Algorithms_Notes.md)         |
 | Stack                     | [STACK NOTES](./Stack_Notes.md)             |
 | Linked-List               | [LINKED-LIST NOTES](./Linked_List_Notes.md) |
+| Queue                     | [QUEUE NOTES](./Queue_Notes.md)             |
 
 ## Usage
 
