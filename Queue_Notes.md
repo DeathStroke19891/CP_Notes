@@ -4,7 +4,8 @@
 | ------ | ----------------------------------------------------------------------- |
 | 1.     | [Queue](#queue)                                                         |
 | 2.     | [Priority Queue](#priority-queue)                                       |
-| 3.     | [Some intresting problems on Queue](#some-intresting-problems-on-queue) |
+| 3.     | [Monotonic Queue](#monotonic-queue)                                       |
+| 4.     | [Some intresting problems on Queue](#some-intresting-problems-on-queue) |
 
 ---
 
@@ -280,6 +281,49 @@ If we queue n elements into the priority queue, the time complexity will be O(n 
 
 ---
 
+# Monotonic Queue
+
+A queue which allows for a way to find the smallest/largest element of the queue in `O(1)`, is called a monotonic queue.
+
+It has a big disadvantage though, because the modified queue will actually not store all elements.
+
+## Idea
+
+The key idea is to store the items in the queue that are needed to determine the minimum. Namely we will keep the queue in nondecreasing order(i.e. the smallest value will be stored in the head), the actual minimum has to be always contained in the queue. This way the samllest element will always be in the head of the queue. 
+
+Before adding a new element to the queue, it is enough to make a "cut": we will remove all trailing  elements of the queue that are larger than the new element, and afterwards add the new element to the queue. This way we don't break the order of the queue, and we will also not loose the current element if it is at any subsequent step, the minmum. All the elements that we removed can never be a minimum itself, so this operation is allowed. When we want to extract an element from the head, it actually might not be there (because we removed it previously while adding a smaller element). Therefore when deleting an element from a queue we need to know the value of the element. If the head of the queue has the same value, we can safely remove it, otherwise we do nothing. 
+
+## Implementation
+
+Consider the implementations of the above operations: 
+
+### Init
+```cp
+deque<int> q;
+```
+
+### Finding minimum
+```cp
+int minimum = q.front();
+```
+### Adding an element
+```cp
+while(!q.empty() && q.back() > new_element)
+    q.pop_back();
+q.push_back(new_element);
+```
+### Removing an element
+```cp
+if(!q.empty() && q.front() == remove_element)
+    q.pop_front();
+```
+## Examples Problems
+
+The above implementation is very specific and might need to be modified depending on the nature of the problem
+
+
++ ![Queries with Fixed Length](https://www.hackerrank.com/challenges/queries-with-fixed-length/problem)
++ ![Binary Land](https://www.codechef.com/MAY20A/problems/BINLAND)
 # Some intresting problems on Queue
 
 ## 1. Implement Queue using Stack
