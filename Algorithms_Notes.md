@@ -486,3 +486,427 @@ Example:
 arr = [1,2,3,4,5,6]
 rotated_arr = [4,5,6,1,2,3]
 ```
+
+**Algorithm:**
+
+1. Input: A rotated sorted array of N elements and a key element.
+2. Output: The index of the key element if found, else -1.
+3. Initialize low = 0 and high = N - 1.
+4. Repeat the following steps until low <= high:
+   - Calculate mid = (low + high) / 2.
+   - If the key element is equal to the middle element, return mid.
+   - If the left half is sorted and the key element is in the left half, set high = mid - 1.
+   - If the right half is sorted and the key element is in the right half, set low = mid + 1.
+   - If the left half is sorted and the key element is in the right half, set low = mid + 1.
+   - If the right half is sorted and the key element is in the left half, set high = mid - 1.
+
+```cpp
+class Solution {
+public:
+    int search(vector<int>& nums, int target) {
+        int left = 0;
+        int right = nums.size() - 1;
+
+        while (left <= right) {
+            int mid = (left + right) / 2;
+
+            if (nums[mid] == target) {
+                return mid;
+            }
+            else if (nums[mid] >= nums[left]) { // Left half is in sorted order
+                if (nums[left] <= target && target <= nums[mid]) { // target is present in that left half
+                    right = mid - 1;
+                } else {
+                    left = mid + 1;
+                }
+            }
+            else {  // Right half is in sorted order
+                if (nums[mid] <= target && target <= nums[right]) {  // target is present in that right half
+                    left = mid + 1;
+                } else {
+                    right = mid - 1;
+                }
+            }
+        }
+
+        return -1;
+    }
+};
+```
+
+The intuition behind this problem is that we need to find which half is sorted and then check if the target element is present in that half. If it is present, then we can search in that half, else we can search in the other half.
+
+> here is a leetcode soultion explained with extensive comments. [Link](https://leetcode.com/problems/search-in-rotated-sorted-array/solutions/5378208/video-find-a-sorted-part-in-ascending-order)
+
+---
+
+# III. Graph and Tree algorithms
+
+Trees are a subset of graphs. Trees are acyclic graphs. We have the following tree algorithms mainly:
+
+1. Depth First Search (DFS)
+2. Breadth First Search (BFS)
+3. Dijkstra's Algorithm
+4. Prim's Algorithm
+5. Kruskal's Algorithm
+6. Topological Sort
+7. Lowest Common Ancestor (LCA)
+8. Floyd-Warshall Algorithm
+9. Bellman-Ford Algorithm
+10. Floyd-Fulkerson Algorithm
+11. Construction of a tree from Inorder and Preorder/Postorder Traversal
+
+We will assume that the following is the strcuture of the tree:
+
+```cpp
+ struct TreeNode {
+     int val;
+     TreeNode *left;
+     TreeNode *right;
+     TreeNode() : val(0), left(nullptr), right(nullptr) {}
+     TreeNode(int x) : val(x), left(nullptr), right(nullptr) {}
+     TreeNode(int x, TreeNode *left, TreeNode *right) : val(x), left(left), right(right) {}
+ };
+```
+
+## 1. Depth First Search (DFS)
+
+Depth first search is a traversal algorithm used to traverse the nodes of a graph or tree. It starts from the root node and explores as far as possible along each branch before backtracking.
+
+> Tree implementation
+
+```cpp
+// This is the pre-order traversal of the tree.
+void dfs(TreeNode* root){
+    if(root == nullptr){
+        return;
+    }
+    cout << root->val << " ";
+    dfs(root->left);
+    dfs(root->right);
+}
+
+// Similarly we can implement the in-order and post-order traversal of the tree.
+// In-order traversal
+void dfs(TreeNode* root){
+    if(root == nullptr){
+        return;
+    }
+    dfs(root->left);
+    cout << root->val << " ";
+    dfs(root->right);
+}
+// Post-order traversal
+void dfs(TreeNode* root){
+    if(root == nullptr){
+        return;
+    }
+    dfs(root->left);
+    dfs(root->right);
+    cout << root->val << " ";
+}
+```
+
+| Time complexity Analysis | Value |
+| ------------------------ | ----- |
+| Best Case                | O(N)  |
+| Worst Case               | O(N)  |
+| Average Case             | O(N)  |
+
+> Graph implementation
+
+The adjacency list representation of the graph is used here.
+
+```cpp
+// Adjacency list representation of the graph.
+class Graph {
+    int V;
+    vector<vector<int>> adj;
+    Graph(int V){
+        this->V = V;
+        adj.resize(V);
+    }
+};
+```
+
+```cpp
+// This is the recursive implementation of the depth first search algorithm.
+class Solution {
+    public:
+    void dfs(int node, vector<vector<int>>& adj, vector<bool>& visited){
+        visited[node] = true;
+        cout << node << " ";
+        for(auto it : adj[node]){
+            if(!visited[it]){
+                dfs(it, adj, visited);
+            }
+        }
+    }
+    int main(){
+        int n, m;
+        cin >> n >> m;
+        vector<vector<int>> adj(n);
+        for(int i = 0; i < m; i++){
+            int u, v;
+            cin >> u >> v;
+            adj[u].push_back(v);
+            adj[v].push_back(u);
+        }
+        vector<bool> visited(n, false);
+        for(int i = 0; i < n; i++){
+            if(!visited[i]){
+                dfs(i, adj, visited);
+            }
+        }
+        return 0;
+    }
+};
+```
+
+| Time complexity Analysis | Value  |
+| ------------------------ | ------ |
+| Best Case                | O(V+E) |
+| Worst Case               | O(V+E) |
+| Average Case             | O(V+E) |
+
+Note - This is for the adjacency list representation of the graph.
+
+| Time complexity Analysis | Value  |
+| ------------------------ | ------ |
+| Best Case                | O(N^2) |
+| Worst Case               | O(N^2) |
+| Average Case             | O(N^2) |
+
+Note - This is for the adjacency matrix representation of the graph.
+
+## 2. Breadth First Search (BFS)
+
+Breadth first search is a traversal algorithm used to traverse the nodes of a graph or tree. It starts from the root node and explores all the nodes at the present depth before moving on to the nodes at the next depth.
+
+> Tree implementation
+
+```cpp
+// This is the level-order traversal of the tree.
+void bfs(TreeNode* root){
+    if(root == nullptr){
+        return;
+    }
+    queue<TreeNode*> q;
+    q.push(root);
+    while(!q.empty()){
+        TreeNode* node = q.front();
+        q.pop();
+        cout << node->val << " ";
+        if(node->left != nullptr){
+            q.push(node->left);
+        }
+        if(node->right != nullptr){
+            q.push(node->right);
+        }
+    }
+}
+```
+
+| Time complexity Analysis | Value |
+| ------------------------ | ----- |
+| Best Case                | O(N)  |
+| Worst Case               | O(N)  |
+| Average Case             | O(N)  |
+
+> Graph implementation
+
+The adjacency list representation of the graph is used here.
+
+```cpp
+void bfs(int node, vector<vector<int>>& adj, vector<bool>& visited){
+    queue<int> q;
+    q.push(node);
+    visited[node] = true;
+    while(!q.empty()){
+        int node = q.front();
+        q.pop();
+        cout << node << " ";
+        for(auto it : adj[node]){
+            if(!visited[it]){
+                visited[it] = true;
+                q.push(it);
+            }
+        }
+    }
+}
+```
+
+| Time complexity Analysis | Value  |
+| ------------------------ | ------ |
+| Best Case                | O(V+E) |
+| Worst Case               | O(V+E) |
+| Average Case             | O(V+E) |
+
+Note - This is for the adjacency list representation of the graph.
+
+| Time complexity Analysis | Value  |
+| ------------------------ | ------ |
+| Best Case                | O(N^2) |
+| Worst Case               | O(N^2) |
+| Average Case             | O(N^2) |
+
+Note - This is for the adjacency matrix representation of the graph.
+
+## 3 Dijkstra's Algorithm
+
+Dijkstra's algorithm is a shortest path algorithm used to find the shortest path from a source node to all other nodes in a graph.
+This is an example of a greedy algorithm.
+
+> Graph Implementation
+
+**Algorithm:**
+
+1. Input: A graph with N nodes and E edges, and a source node.
+2. Output: The shortest path from the source node to all other nodes.
+3. Initialize a distance array with infinity and the source node with 0.
+4. Initialize a priority queue and push the source node with distance 0.
+5. Repeat the following steps until the priority queue is empty:
+   - Extract the node with the minimum distance from the priority queue.
+   - For each neighbor of the extracted node, do the following:
+     - If the distance of the neighbor is greater than the distance of the extracted node + the edge weight, update the distance of the neighbor.
+     - Push the neighbor into the priority queue with the updated distance.
+
+```cpp
+class Solution {
+    public:
+    void dijkstra(int src, vector<vector<pair<int, int>>>& adj, int V){
+        vector<int> dist(V, INT_MAX);
+        dist[src] = 0;
+        priority_queue<pair<int, int>, vector<pair<int, int>>, greater<pair<int, int>>> pq;
+        pq.push({0, src});
+        while(!pq.empty()){
+            int node = pq.top().second;
+            int node_dist = pq.top().first;
+            pq.pop();
+            for(auto it : adj[node]){ // it = {node, weight}
+                if(node_dist + it.second < dist[it.first]){
+                    dist[it.first] = node_dist + it.second;
+                    pq.push({dist[it.first], it.first});
+                }
+            }
+        }
+        for(int i = 0; i < V; i++){
+            cout << dist[i] << " ";
+        }
+    }
+    int main(){
+        int n, m;
+        cin >> n >> m;
+        vector<vector<pair<int, int>>> adj(n);
+        for(int i = 0; i < m; i++){
+            int u, v, wt;
+            cin >> u >> v >> wt;
+            adj[u].push_back({v, wt});
+        }
+        int src;
+        cin >> src;
+        dijkstra(src, adj, n);
+        return 0;
+    }
+};
+```
+
+| Time complexity Analysis | Value  |
+| ------------------------ | ------ |
+| Best Case                | O(V+E) |
+| Worst Case               | O(V+E) |
+| Average Case             | O(V+E) |
+
+```
+// Here priority queue does the job of visited array.
+
+
+Dry run:
+Example:
+Graph representation (each edge is represented as {vertex, weight}):
+
+Vertex 0: {1, 4}, {2, 1}
+Vertex 1: {3, 1}
+Vertex 2: {1, 2}, {3, 5}
+Vertex 3: {4, 3}
+Vertex 4: No outgoing edges
+We want to find the shortest path from vertex 0 to all other vertices.
+
+Initialization
+Distances: dist[0, ∞, ∞, ∞, ∞] (distance to itself is 0, others are infinity)
+Visited: [false, false, false, false, false]
+Source: src = 0
+
+Step 1: Visit Vertex 0
+Update distances using vertex 0's edges:
+dist[1] = 4 (0 → 1)
+dist[2] = 1 (0 → 2)
+Visited[0] = true
+
+Step 2: Visit Vertex 2 (smallest distance among unvisited)
+Update distances using vertex 2's edges:
+dist[1] = min(4, 1 + 2) = 3 (0 → 2 → 1)
+dist[3] = min(∞, 1 + 5) = 6 (0 → 2 → 3)
+Visited[2] = true
+
+Step 3: Visit Vertex 1 (next smallest distance)
+Update distances using vertex 1's edges:
+dist[3] = min(6, 3 + 1) = 4 (0 → 2 → 1 → 3)
+Visited[1] = true
+
+Step 4: Visit Vertex 3 (next smallest distance)
+Update distances using vertex 3's edges:
+dist[4] = min(∞, 4 + 3) = 7 (0 → 2 → 1 → 3 → 4)
+Visited[3] = true
+
+Step 5: Visit Vertex 4
+No outgoing edges to update distances.
+Visited[4] = true
+
+Final Distances
+From vertex 0 to:
+Vertex 1: Distance = 3
+Vertex 2: Distance = 1
+Vertex 3: Distance = 4
+Vertex 4: Distance = 7
+```
+
+> Tree implementation
+
+```cpp
+// This is the implementation of the dijkstra's algorithm for a tree.
+void dijkstra(TreeNode* root){
+    if(root == nullptr){
+        return;
+    }
+    priority_queue<pair<int, TreeNode*>, vector<pair<int, TreeNode*>>, greater<pair<int, TreeNode*>>> pq;
+    pq.push({0, root});
+    while(!pq.empty()){
+        TreeNode* node = pq.top().second;
+        int node_dist = pq.top().first;
+        pq.pop();
+        cout << node->val << " ";
+        if(node->left != nullptr){
+            pq.push({node_dist + 1, node->left});
+        }
+        if(node->right != nullptr){
+            pq.push({node_dist + 1, node->right});
+        }
+    }
+}
+```
+
+## 4. Prim's Algorithm
+
+Prims algorithm is a minimum spanning tree algorithm used to find the minimum spanning tree of a graph. It starts from an arbitrary node and adds the minimum weight edge to the tree at each step.
+
+What is a minimum spanning tree?
+A minimum spanning tree is a subset of the edges of a connected, edge-weighted graph that connects all the vertices together with the minimum possible total edge weight.
+In simple terms, it is a tree that connects all the vertices of the graph with the minimum possible total edge weight.
+
+> Graph Implementation
+
+**Algorithm:**
+
+1. Input: A graph with N nodes and E edges.
+2. Output: The minimum spanning tree of the graph.
