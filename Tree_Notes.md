@@ -29,10 +29,10 @@
 
 # Some important questions
 
-| Sl No | Question                                                                              |
-| ----- | ------------------------------------------------------------------------------------- |
-| 1     | [Serialize and Deserialize a Binary Tree](#1-serialize-and-deserialize-a-binary-tree) |
-| 2     | [Finding path from node to node through Lowest Common Ancestor in Trees]()            |
+| Sl No | Question                                                                                                                                            |
+| ----- | --------------------------------------------------------------------------------------------------------------------------------------------------- |
+| 1     | [Serialize and Deserialize a Binary Tree](#1-serialize-and-deserialize-a-binary-tree)                                                               |
+| 2     | [Finding path from node to node through Lowest Common Ancestor in Trees](#2-finding-path-from-node-to-node-through-lowest-common-ancestor-in-trees) |
 
 ---
 
@@ -1024,6 +1024,7 @@ The idea is to add some delimiters so that we can keep track of node values and 
 
 This is a question from leetcode.
 Link to problem - [Click Here](https://leetcode.com/problems/step-by-step-directions-from-a-binary-tree-node-to-another/description/)
+
 The problem is to find the path from one node to another node in a binary tree.
 
 ```cpp
@@ -1144,5 +1145,13 @@ class Solution {
 
         return path;
     }
-
 ```
+
+This code will return a vector of pairs of TreeNodes and the direction of the path from source to destination.
+
+There is a codeforces problem which is along the same lines.
+
+- [Question](https://codeforces.com/contest/1981/problem/C)
+- [Solution](https://codeforces.com/blog/entry/129848)
+
+---
