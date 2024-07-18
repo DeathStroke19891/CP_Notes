@@ -29,9 +29,10 @@
 
 # Some important questions
 
-| Sl No | Question                                    |
-| ----- | ------------------------------------------- |
-| 1     | [Serialize and Deserialize a Binary Tree]() |
+| Sl No | Question                                                                                                                                            |
+| ----- | --------------------------------------------------------------------------------------------------------------------------------------------------- |
+| 1     | [Serialize and Deserialize a Binary Tree](#1-serialize-and-deserialize-a-binary-tree)                                                               |
+| 2     | [Finding path from node to node through Lowest Common Ancestor in Trees](#2-finding-path-from-node-to-node-through-lowest-common-ancestor-in-trees) |
 
 ---
 
@@ -1018,3 +1019,139 @@ TreeNode* deserialize(string data) {
 ```
 
 The idea is to add some delimiters so that we can keep track of node values and null values. The `serialize` function uses a queue to perform level order traversal and adds the node values to the string. The `deserialize` function splits the string into node values and null values and constructs the binary tree using a queue.
+
+## 2. Finding path from node to node through Lowest Common Ancestor in Trees
+
+This is a question from leetcode.
+Link to problem - [Click Here](https://leetcode.com/problems/step-by-step-directions-from-a-binary-tree-node-to-another/description/)
+
+The problem is to find the path from one node to another node in a binary tree.
+
+```cpp
+/**
+ * Definition for a binary tree node.
+ * struct TreeNode {
+ *     int val;
+ *     TreeNode *left;
+ *     TreeNode *right;
+ *     TreeNode() : val(0), left(nullptr), right(nullptr) {}
+ *     TreeNode(int x) : val(x), left(nullptr), right(nullptr) {}
+ *     TreeNode(int x, TreeNode *left, TreeNode *right) : val(x), left(left), right(right) {}
+ * };
+ */
+class Solution {
+public:
+    TreeNode* LCA(TreeNode* root, int& p, int& q){
+        if(root == nullptr || root->val == p || root->val == q)
+            return root;
+        TreeNode* left = LCA(root->left,p,q);
+        TreeNode* right = LCA(root->right,p,q);
+        if (left == nullptr)
+            return right;
+        if (right == nullptr)
+            return left;
+        return root;
+
+    }
+
+    bool dfs(TreeNode* root, int x, string& path, bool rev) {
+        if (root == NULL)
+            return 0;
+        if (root->val == x)
+            return 1;
+
+        path += (rev ? 'U' : 'L');
+        if (dfs(root->left, x, path, rev))
+            return 1;
+        path.pop_back();
+
+        path += (rev ? 'U' : 'R');
+        if (dfs(root->right, x, path, rev))
+            return 1;
+        path.pop_back();
+
+        return 0;
+    }
+
+    string getDirections(TreeNode* root, int startValue, int destValue) {
+        std::ios::sync_with_stdio(false);
+
+        root = LCA(root, startValue, destValue);
+        string pathFrom = "", pathTo = "";
+        dfs(root,startValue,pathFrom,1);
+        dfs(root,destValue,pathTo,0);
+        return pathFrom + pathTo;
+    }
+};
+```
+
+Here we are finding the path as a string from the Source to its lowest common ancestor and then from the lowest common ancestor to the destination. We are using a boolean variable to keep track of the direction of the path.
+
+Lets say we want a more generic solution where we can find the path and distance from any node to any node.
+We want to return a vector of TreeNodes which are in the path from source to destination.
+
+```cpp
+class Solution {
+    public:
+    TreeNode* LCA(TreeNode* root, int& p, int& q){
+        if(root == nullptr || root->val == p || root->val == q)
+            return root;
+        TreeNode* left = LCA(root->left,p,q);
+        TreeNode* right = LCA(root->right,p,q);
+        if (left == nullptr)
+            return right;
+        if (right == nullptr)
+            return left;
+        return root;
+
+    }
+
+    bool dfs(TreeNode* root, int x, vector<pair<TreeNode*,char>>&path,bool rev){
+        if(root == nullptr)
+            return 0;
+        if(root->val == x){
+            return 1;
+        }
+        char dir = rev ? 'U' : 'L';
+        path.push_back({root,dir});
+        if(dfs(root->left,x,path))
+            return 1;
+        path.pop_back();
+
+        dir = rev ? 'U' : 'R';
+        path.push_back({root,dir});
+        if(dfs(root->right,x,path))
+            return 1;
+        path.pop_back();
+
+        return 0;
+    }
+
+    vector<pair<TreeNode*,char>> getDirections(TreeNode* root, int startValue, int destValue){
+        TreeNode* lowestCommonAncestor = LCA(root,startValue,destValue);
+        vector<pair<TreeNode*,char>> pathSrc,pathDes,path;
+        dfs(lowestCommonAncestor,startValue,pathSrc,1);
+        dfs(lowestCommonAncestor,destValue,pathDest,0);
+
+        if(pathSrc.empty() || pathDest.empty())
+            return path;
+
+        for(auto i : pathSrc)
+            path.push_back(i);
+        for(auto i : pathDest)
+            path.push_back(i);
+
+        int pathlen = path.size();
+
+        return path;
+    }
+```
+
+This code will return a vector of pairs of TreeNodes and the direction of the path from source to destination.
+
+There is a codeforces problem which is along the same lines.
+
+- [Question](https://codeforces.com/contest/1981/problem/C)
+- [Solution](https://codeforces.com/blog/entry/129848)
+
+---
