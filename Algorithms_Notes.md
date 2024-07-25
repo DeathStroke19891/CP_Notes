@@ -1,14 +1,48 @@
 # Table of Contents
 
-| Sl. No. | Topic |
-| ------- | ----- |
-| 1       |       |
-| 2       |       |
-| 3       |       |
+| Sl. No. | Topic                                                       |
+| ------- | ----------------------------------------------------------- |
+| 1       | [Sorting algorithms](#i-sorting-algorithms)                 |
+| 2       | [Searching algorithms](#ii-searching-algorithms)            |
+| 3       | [Graph and Tree algorithms](#iii-graph-and-tree-algorithms) |
 
 ---
 
 # Subtopics
+
+| Sl. No. | Topic                             |
+| ------- | --------------------------------- |
+| 1       | [Merge Sort](#1-merge-sort)       |
+| 2       | [Quick Sort](#2-quick-sort)       |
+| 3       | [Heap Sort](#3-heap-sort)         |
+| 4       | [Counting Sort](#4-counting-sort) |
+| 5       | [Radix Sort](#5-radix-sort)       |
+
+---
+
+# Subtopics
+
+| Sl. No. | Topic                             |
+| ------- | --------------------------------- |
+| 1       | [Linear Search](#1-linear-search) |
+| 2       | [Binary Search](#2-binary-search) |
+
+---
+
+# Subtopics
+
+| Sl. No. | Topic                                                                                                                                           |
+| ------- | ----------------------------------------------------------------------------------------------------------------------------------------------- |
+| 1       | [Depth First Search (DFS)](#1-depth-first-search-dfs)                                                                                           |
+| 2       | [Breadth First Search (BFS)](#2-breadth-first-search-bfs)                                                                                       |
+| 3       | [Dijkstra's Algorithm](#3-dijkstras-algorithm)                                                                                                  |
+| 4       | [Prim's Algorithm](#4-prims-algorithm)                                                                                                          |
+| 5       | [Topological Sort](#5-topological-sort)                                                                                                         |
+| 6       | [Lowest Common Ancestor (LCA)](#6-lowest-common-ancestor)                                                                                       |
+| 7       | [Floyd-Warshall Algorithm](#7-floyd-warshall-algorithm)                                                                                         |
+| 8       | [Bellman-Ford Algorithm](#8-bellman-ford-algorithm)                                                                                             |
+| 9       | [Floyd-Fulkerson Algorithm](#9-floyd-fulkerson-algorithm)                                                                                       |
+| 10      | [Construction of a tree from Inorder and Preorder/Postorder Traversal](#10-construction-of-a-tree-from-inorder-and-preorderpostorder-traversal) |
 
 ---
 
@@ -548,13 +582,12 @@ Trees are a subset of graphs. Trees are acyclic graphs. We have the following tr
 2. Breadth First Search (BFS)
 3. Dijkstra's Algorithm
 4. Prim's Algorithm
-5. Kruskal's Algorithm
-6. Topological Sort
-7. Lowest Common Ancestor (LCA)
-8. Floyd-Warshall Algorithm
-9. Bellman-Ford Algorithm
-10. Floyd-Fulkerson Algorithm
-11. Construction of a tree from Inorder and Preorder/Postorder Traversal
+5. Topological Sort
+6. Lowest Common Ancestor (LCA)
+7. Floyd-Warshall Algorithm
+8. Bellman-Ford Algorithm
+9. Floyd-Fulkerson Algorithm
+10. Construction of a tree from Inorder and Preorder/Postorder Traversal
 
 We will assume that the following is the strcuture of the tree:
 
@@ -898,6 +931,8 @@ void dijkstra(TreeNode* root){
 
 ## 4. Prim's Algorithm
 
+> This is for Minimum Spanning Tree
+
 Prims algorithm is a minimum spanning tree algorithm used to find the minimum spanning tree of a graph. It starts from an arbitrary node and adds the minimum weight edge to the tree at each step.
 
 What is a minimum spanning tree?
@@ -910,3 +945,629 @@ In simple terms, it is a tree that connects all the vertices of the graph with t
 
 1. Input: A graph with N nodes and E edges.
 2. Output: The minimum spanning tree of the graph.
+3. Choose an arbitrary node as the starting node of MST.
+4. Till there are vertices which are not included in the MST, do the following:
+   - Find the minimum weight edge from the vertices included in the MST to the vertices not included in the MST.
+   - Add the minimum weight edge to the MST.
+
+```cpp
+// We take the adjacency list representation of the graph.
+class Solution {
+    public:
+    void prims(int src, vector<vector<pair<int, int>>>& adj, int V){
+        vector<int> key(V, INT_MAX);
+        vector<int> parent(V, -1);
+        vector<bool> mst(V, false);
+        priority_queue<pair<int, int>, vector<pair<int, int>>, greater<pair<int, int>>> pq;
+        pq.push({0, src});
+        key[src] = 0;
+        while(!pq.empty()){
+            int u = pq.top().second;
+            pq.pop();
+            mst[u] = true;
+            for(auto it : adj[u]){
+                int v = it.first;
+                int weight = it.second;
+                if(mst[v] == false && weight < key[v]){
+                    parent[v] = u;
+                    key[v] = weight;
+                    pq.push({key[v], v});
+                }
+            }
+        }
+        for(int i = 1; i < V; i++){
+            cout << parent[i] << " - " << i << " " << key[i] << endl;
+        }
+    }
+    int main(){
+        int n, m;
+        cin >> n >> m;
+        vector<vector<pair<int, int>>> adj(n);
+        for(int i = 0; i < m; i++){
+            int u, v, wt;
+            cin >> u >> v >> wt;
+            adj[u].push_back({v, wt});
+            adj[v].push_back({u, wt});
+        }
+        prims(0, adj, n);
+        return 0;
+    }
+};
+```
+
+| Time complexity Analysis | Value  |
+| ------------------------ | ------ |
+| Best Case                | O(V+E) |
+| Worst Case               | O(V+E) |
+| Average Case             | O(V+E) |
+
+The key array is used to store the minimum weight edge from the vertices included in the MST to the vertices not included in the MST.
+Hence it is initialized with INT_MAX.
+
+The parent array is used to store the parent of each vertex in the MST.
+Here -1 is used to represent that the vertex is not included in the MST.
+
+The mst array is used to store whether the vertex is included in the MST or not.
+
+First we push the source node with distance 0 into the priority queue.
+Then we extract the node with the minimum distance from the priority queue.
+For first run it will be the source node.
+Then we mark the node as included in the MST.
+Then we iterate through the neighbors of the extracted node.
+Push each neighbor into the priority queue if it is not included in the MST and the weight is less than the key of the neighbor.
+
+This means that , the given neighbour can be reached from the extracted node with the minimum weight edge whose weight is less than the key of the neighbour.
+
+We can also use adjacency weight matrix representation of the graph.
+
+```cpp
+class Solution {
+    public:
+    void prims(int src, vector<vector<int>>& adj, int V){
+        vector<int> key(V, INT_MAX);
+        vector<int> parent(V, -1);
+        vector<bool> mst(V, false);
+        priority_queue<pair<int, int>, vector<pair<int, int>>, greater<pair<int, int>>> pq;
+        pq.push({0, src});
+        key[src] = 0;
+        while(!pq.empty()){
+            int u = pq.top().second;
+            pq.pop();
+            mst[u] = true;
+            for(int v = 0; v < V; v++){
+                if(adj[u][v] != 0 && mst[v] == false && adj[u][v] < key[v]){
+                    parent[v] = u;
+                    key[v] = adj[u][v];
+                    pq.push({key[v], v});
+                }
+            }
+        }
+        for(int i = 1; i < V; i++){
+            cout << parent[i] << " - " << i << " " << key[i] << endl;
+        }
+    }
+    int main(){
+        int n, m;
+        cin >> n >> m;
+        vector<vector<int>> adj(n, vector<int>(n, 0));
+        for(int i = 0; i < m; i++){
+            int u, v, wt;
+            cin >> u >> v >> wt;
+            adj[u][v] = wt;
+            adj[v][u] = wt;
+        }
+        prims(0, adj, n);
+        return 0;
+    }
+};
+```
+
+| Time complexity Analysis | Value  |
+| ------------------------ | ------ |
+| Best Case                | O(V^2) |
+| Worst Case               | O(V^2) |
+| Average Case             | O(V^2) |
+
+## 5. Topological Sort
+
+Topological sort is an ordering of the vertices of a directed acyclic graph (DAG) such that for every directed edge from vertex u to vertex v, u comes before v in the ordering.
+
+> Graph Implementation
+
+**Algorithm:**
+
+1. Input: A graph with N nodes and E edges.
+2. Output: The topological ordering of the graph.
+3. Initialize an indegree array with 0.
+4. Calculate the indegree of each node.
+5. Initialize a queue and push the nodes with indegree 0 into the queue.
+6. Repeat the following steps until the queue is empty:
+   - Extract the node from the queue.
+   - For each neighbor of the extracted node, do the following:
+     - Decrement the indegree of the neighbor.
+     - If the indegree of the neighbor is 0, push it into the queue.
+
+```cpp
+class Solution{
+    public:
+        // Graph is represented as adjacency matrix
+        void topologicalSort(vector<vector<int>>& adj, int V){
+            vector<int> indegree(V, 0);
+            for(int i = 0; i < V; i++){
+                for(int j = 0; j < V; j++){
+                    if(adj[i][j] == 1){
+                        indegree[j]++;
+                    }
+                }
+            }
+            queue<int> q;
+            for(int i = 0; i < V; i++){
+                if(indegree[i] == 0){
+                    q.push(i);
+                }
+            }
+            while(!q.empty()){
+                int node = q.front();
+                q.pop();
+                cout << node << " ";
+                for(int i = 0; i < V; i++){
+                    if(adj[node][i] == 1){
+                        indegree[i]--;
+                        if(indegree[i] == 0){
+                            q.push(i);
+                        }
+                    }
+                }
+            }
+        }
+}
+```
+
+There is also a adjacency list representation of the graph.
+
+```cpp
+class Solution{
+    public:
+        void topologicalSort(vector<vector<int>>adj, int V){
+            vector<int> indegree(V, 0);
+            for(int i = 0; i < V; i++){
+                for(auto it : adj[i]){
+                    indegree[it]++;
+                }
+            }
+            queue<int> q;
+            for(int i = 0; i < V; i++){
+                if(indegree[i] == 0){
+                    q.push(i);
+                }
+            }
+            while(!q.empty()){
+                int node = q.front();
+                q.pop();
+                cout << node << " ";
+                for(auto it : adj[node]){
+                    indegree[it]--;
+                    if(indegree[it] == 0){
+                        q.push(it);
+                    }
+                }
+            }
+        }
+}
+```
+
+| Time complexity Analysis | Value  |
+| ------------------------ | ------ |
+| Adjacency List           | -      |
+| Best Case                | O(V+E) |
+| Worst Case               | O(V+E) |
+| Average Case             | O(V+E) |
+| Adjacency Matrix         | -      |
+| Best Case                | O(V^2) |
+| Worst Case               | O(V^2) |
+| Average Case             | O(V^2) |
+
+## 6. Lowest Common Ancestor (LCA)
+
+This is used to find the lowest common ancestor of two nodes in a binary tree.
+
+**Algorithm:**
+
+1. Input: A binary tree and two nodes.
+2. Output: The lowest common ancestor of the two nodes.
+3. If the root is null, return null.
+4. If the root is equal to either of the nodes, return the root.
+   - We assume that a given node can be an ancestor of itself.
+5. Recursively find the LCA in the left subtree and right subtree.
+6. If both the left and right subtrees return a non-null value, then the root is the LCA.
+
+```cpp
+class Solution {
+    public:
+    TreeNode* lca(TreeNode* root, TreeNode* p, TreeNode* q){
+        if(root == nullptr){
+            return nullptr;
+        }
+        if(root == p || root == q){
+            return root;
+        }
+        TreeNode* left = lca(root->left, p, q);
+        TreeNode* right = lca(root->right, p, q);
+        if(left != nullptr && right != nullptr){
+            return root;
+        }
+        if(left != nullptr){
+            return left;
+        }
+        return right;
+    }
+};
+```
+
+| Time complexity Analysis | Value |
+| ------------------------ | ----- |
+| Best Case                | O(N)  |
+| Worst Case               | O(N)  |
+| Average Case             | O(N)  |
+
+Why its O(N) ?
+In the worst case, we may have to visit all the nodes of the binary tree to find the LCA.
+In the best case, we may find the LCA in the first few nodes itself.
+
+## 7. Floyd-Warshall Algorithm
+
+Floyd Warshall algorithm is an all-pairs shortest path algorithm used to find the shortest path between all pairs of vertices in a graph.
+
+**Algorithm:**
+
+1. Input: A graph with N nodes and E edges.
+2. Output: The shortest path between all pairs of vertices.
+3. Initialize a distance matrix with infinity.
+4. Initialize the diagonal of the distance matrix with 0.
+5. For each edge in the graph, update the distance matrix with the edge weight.
+6. Repeat the following steps for each vertex as an intermediate vertex:
+   - For each pair of vertices, do the following:
+     - If the distance between the pair of vertices is greater than the sum of the distance between the pair of vertices through the intermediate vertex, update the distance.
+
+```cpp
+class Solution{
+    public:
+    vector<vector<int>> floydWarshall(vector<vector<int>>& graph, int V){
+        vector<vector<int>> dist = graph;
+        for(int k = 0; k < V; k++){
+            for(int i = 0; i < V; i++){
+                for(int j = 0; j < V; j++){
+                    if(dist[i][k] != INT_MAX && dist[k][j] != INT_MAX && dist[i][k] + dist[k][j] < dist[i][j]){
+                        dist[i][j] = dist[i][k] + dist[k][j];
+                    }
+                }
+            }
+        }
+        return dist;
+    }
+}
+```
+
+| Time complexity Analysis | Value  |
+| ------------------------ | ------ |
+| Best Case                | O(V^3) |
+| Worst Case               | O(V^3) |
+| Average Case             | O(V^3) |
+
+There is also a adjacency list representation of the graph.
+
+```cpp
+class Solution{
+    public:
+    vector<vector<int>> floydWarshall(vector<vector<pair<int, int>>>& adj, int V){
+        vector<vector<int>> dist(V, vector<int>(V, INT_MAX));
+        for(int i = 0; i < V; i++){
+            dist[i][i] = 0;
+            for(auto it : adj[i]){
+                dist[i][it.first] = it.second;
+            }
+        }
+        for(int k = 0; k < V; k++){
+            for(int i = 0; i < V; i++){
+                for(int j = 0; j < V; j++){
+                    if(dist[i][k] != INT_MAX && dist[k][j] != INT_MAX && dist[i][k] + dist[k][j] < dist[i][j]){
+                        dist[i][j] = dist[i][k] + dist[k][j];
+                    }
+                }
+            }
+        }
+        return dist;
+    }
+}
+```
+
+| Time complexity Analysis | Value  |
+| ------------------------ | ------ |
+| Best Case                | O(V^3) |
+| Worst Case               | O(V^3) |
+| Average Case             | O(V^3) |
+
+Floyd Warshall is best suited for dense graphs.
+
+## 8. Bellman-Ford Algorithm
+
+This is a single source shortest path algorithm used to find the shortest path from a source node to all other nodes in a graph.
+
+> This works for graphs with negative edge weights.
+
+**Algorithm:**
+
+1. Input: A graph with N nodes and E edges, and a source node.
+2. Output: The shortest path from the source node to all other nodes.
+3. Initialize a distance array with infinity and the source node with 0.
+4. Repeat the following steps for V-1 times:
+   - For each edge in the graph, do the following:
+     - If the distance of the destination node is greater than the distance of the source node + the edge weight, update the distance of the destination node.
+5. Check for negative weight cycles.
+6. If there are no negative weight cycles, return the distance array.
+
+```cpp
+class Solution{
+    public:
+    vector<int> bellmanFord(int src, vector<vector<int>>& edges, int V){
+        /*
+        structure of graphs is {u, v, wt}
+        */
+        vector<int> dist(V, INT_MAX);
+        dist[src] = 0;
+        for(int i = 0; i < V-1; i++){
+            for(auto edge : edges){
+                int u = edge[0];
+                int v = edge[1];
+                int wt = edge[2];
+                if(dist[u] != INT_MAX && dist[u] + wt < dist[v]){
+                    dist[v] = dist[u] + wt;
+                }
+            }
+        }
+        for(auto edge : edges){
+            int u = edge[0];
+            int v = edge[1];
+            int wt = edge[2];
+            if(dist[u] != INT_MAX && dist[u] + wt < dist[v]){
+                cout << "Negative weight cycle found!";
+                break;
+            }
+        }
+        return dist;
+    }
+}
+```
+
+| Time complexity Analysis | Value |
+| ------------------------ | ----- |
+| Best Case                | O(V)  |
+| Worst Case               | O(VE) |
+| Average Case             | O(VE) |
+
+Best case is when the graph is already sorted and we need to just iterate through the vertices.
+Sorted means the graph is already in the order of the shortest path.
+
+Worst case is when we need to iterate through all the edges for V-1 times.
+
+What is a negetive weight cycle ?
+A negetive weight cycle is a cycle in the graph where the sum of the weights of the edges in the cycle is negative.
+
+How make sure that there is no negative weight cycle ?
+If there is no negative weight cycle, then the shortest path from the source node to all other nodes will be found in V-1 iterations.
+If there is a negative weight cycle, then the shortest path will not be found in V-1 iterations.
+
+So in the distance array if we find that the distance of the destination node is greater than the distance of the source node + the edge weight, then it means that there is a negative weight cycle.
+
+Handling disconnected graphs:
+If the graph is disconnected, then we need to run the Bellman-Ford algorithm for each connected component of the graph.
+
+## 9. Floyd-Fulkerson Algorithm
+
+Flow networks are used to represent the flow of a commodity from one node to another in a graph. The Floyd-Fulkerson algorithm is used to find the maximum flow in a flow network.
+
+**Algorithm:**
+
+1. Input: A flow network with N nodes and E edges, a source node, and a sink node.
+2. Output: The maximum flow from the source node to the sink node.
+3. Start with the flow as 0.
+4. Repeat the following steps until there is a path from the source node to the sink node:
+   - Find a path from the source node to the sink node.
+   - Find the minimum capacity of the path.
+   - Update the flow of the path.
+   - Update the residual graph.
+5. Return the maximum flow.
+
+```cpp
+class Solution{
+    public:
+    bool bfs(vector<vector<int>>& rGraph, int src, int dest, vector<int>& parent, int V){
+        vector<bool> visited(V, false);
+        queue<int> q;
+        q.push(src);
+        visited[src] = true;
+        parent[src] = -1;
+        while(!q.empty()){
+            int u = q.front();
+            q.pop();
+            for(int v = 0; v < V; v++){
+                if(visited[v] == false && rGraph[u][v] > 0){
+                    q.push(v);
+                    parent[v] = u;
+                    visited[v] = true;
+                }
+            }
+        }
+        return visited[dest];
+    }
+    int fordFulkerson(vector<vector<int>>& graph, int src, int dest, int V){
+        // graph structure is graph[u][v] = capacity  of edge from u to v
+        vector<vector<int>> rGraph = graph;
+        vector<int> parent(V);
+        int maxFlow = 0;
+        while(bfs(rGraph, src, dest, parent, V)){
+            int pathFlow = INT_MAX;
+            for(int v = dest; v != src; v = parent[v]){
+                int u = parent[v];
+                pathFlow = min(pathFlow, rGraph[u][v]);
+            }
+            for(int v = dest; v != src; v = parent[v]){
+                int u = parent[v];
+                rGraph[u][v] -= pathFlow;
+                rGraph[v][u] += pathFlow;
+            }
+            maxFlow += pathFlow;
+        }
+        return maxFlow;
+    }
+}
+```
+
+The code is doing the following:
+
+1. It is finding the path from the source node to the sink node using BFS.
+2. It is finding the minimum capacity of the path.
+3. It is updating the flow of the path.
+4. It is updating the residual graph.
+5. It is returning the maximum flow.
+
+BFS is doing the following:
+
+1. It takes the residual graph, source node, sink node, parent array, and the number of nodes as input.
+2. It initializes a visited array with false and a queue.
+3. It pushes the source node into the queue and marks it as visited.
+4. It iterates through the neighbors of the source node.
+5. If the neighbor is not visited and the capacity of the edge is greater than 0, it pushes the neighbor into the queue and marks it as visited.
+6. It returns whether the sink node is visited or not.
+7. If the sink node is visited, it means there is a path from the source node to the sink node.
+8. If there is a path, it finds the minimum capacity of the path.
+
+This is because we are using adjacency matrix representation of the graph.
+| Time complexity Analysis | Value |
+| ------------------------ | -------- |
+| Best Case | O(E V^3) |
+| Worst Case | O(E V^3) |
+| Average Case | O(E V^3) |
+
+```cpp
+//Adjacency list representation of the graph
+class Solution{
+    public:
+    bool bfs(vector<vector<pair<int, int>>>& rGraph, int src, int dest, vector<int>& parent, int V){
+        vector<bool> visited(V, false);
+        queue<int> q;
+        q.push(src);
+        visited[src] = true;
+        parent[src] = -1;
+        while(!q.empty()){
+            int u = q.front();
+            q.pop();
+            for(auto it : rGraph[u]){
+                int v = it.first;
+                int wt = it.second;
+                if(visited[v] == false && wt > 0){
+                    q.push(v);
+                    parent[v] = u;
+                    visited[v] = true;
+                }
+            }
+        }
+        return visited[dest];
+    }
+
+    int fordFulkerson(vector<vector<pair<int, int>>>& graph, int src, int dest, int V){
+        vector<vector<pair<int, int>>> rGraph = graph;
+        vector<int> parent(V);
+        int maxFlow = 0;
+        while(bfs(rGraph, src, dest, parent, V)){
+            int pathFlow = INT_MAX;
+            for(int v = dest; v != src; v = parent[v]){
+                int u = parent[v];
+                for(auto it : rGraph[u]){
+                    if(it.first == v){
+                        pathFlow = min(pathFlow, it.second);
+                        break;
+                    }
+                }
+            }
+            for(int v = dest; v != src; v = parent[v]){
+                int u = parent[v];
+                for(auto& it : rGraph[u]){
+                    if(it.first == v){
+                        it.second -= pathFlow;
+                        break;
+                    }
+                }
+                rGraph[v].push_back({u, pathFlow});
+            }
+            maxFlow += pathFlow;
+        }
+        return maxFlow;
+    }
+}
+```
+
+| Time complexity Analysis | Value    |
+| ------------------------ | -------- |
+| Best Case                | O(V E^2) |
+| Worst Case               | O(V E^2) |
+| Average Case             | O(V E^2) |
+
+## 10. Construction of a tree from Inorder and Preorder/Postorder Traversal
+
+Given the inorder and preorder/postorder traversal of a binary tree, we can construct the binary tree.
+
+**Algorithm: Using Postorder Traversal**
+
+1. Input: Inorder and postorder traversal of a binary tree.
+2. Output: The binary tree.
+3. The last element of the postorder traversal is the root of the binary tree.
+4. Find the root element in the inorder traversal.
+5. The elements to the left of the root element in the inorder traversal are the left subtree of the root.
+6. The elements to the right of the root element in the inorder traversal are the right subtree of the root.
+7. Recursively construct the left and right subtrees.
+
+```cpp
+class Solution{
+    public:
+    TreeNode* buildTree(vector<int>& inorder, vector<int>& postorder){
+        return buildTreePost(inorder, postorder, 0, inorder.size()-1, 0, postorder.size()-1);
+    }
+    TreeNode* buildTreePost(vector<int>& inorder, vector<int>& postorder, int inStart, int inEnd, int postStart, int postEnd){
+        if(inStart > inEnd){
+            return nullptr;
+        }
+        int rootVal = postorder[postEnd];
+        TreeNode* root = new TreeNode(rootVal);
+        int rootIndex = 0;
+        for(int i = inStart; i <= inEnd; i++){
+            if(inorder[i] == rootVal){
+                rootIndex = i;
+                break;
+            }
+        }
+        int leftSize = rootIndex - inStart;
+        root->left = buildTreePost(inorder, postorder, inStart, rootIndex-1, postStart, postStart+leftSize-1);
+        root->right = buildTreePost(inorder, postorder, rootIndex+1, inEnd, postStart+leftSize, postEnd-1);
+        return root;
+    }
+}
+```
+
+```
+Example:
+Inorder: [9, 3, 15, 20, 7]
+Postorder: [9, 15, 7, 20, 3]
+Output:
+    3
+   / \
+  9  20
+    /  \
+   15   7
+```
+
+| Time complexity Analysis | Value |
+| ------------------------ | ----- |
+| Best Case                | O(N)  |
+| Worst Case               | O(N)  |
+| Average Case             | O(N)  |
