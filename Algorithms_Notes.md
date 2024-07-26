@@ -43,6 +43,10 @@
 | 8       | [Bellman-Ford Algorithm](#8-bellman-ford-algorithm)                                                                                             |
 | 9       | [Floyd-Fulkerson Algorithm](#9-floyd-fulkerson-algorithm)                                                                                       |
 | 10      | [Construction of a tree from Inorder and Preorder/Postorder Traversal](#10-construction-of-a-tree-from-inorder-and-preorderpostorder-traversal) |
+| 11      | [Articulation points](#11-articulation-points)                                                                                                  |
+| 12      | [Bridges](#12-bridges)                                                                                                                          |
+| 13      | [Lowest Common Ancestor (Tarjan's Algorithm)](#13-lowest-common-ancestor-tarjans-algorithm)                                                     |
+| 14      | [Bipartite Matching](#14-bipartite-matching)                                                                                                    |
 
 ---
 
@@ -588,6 +592,10 @@ Trees are a subset of graphs. Trees are acyclic graphs. We have the following tr
 8. Bellman-Ford Algorithm
 9. Floyd-Fulkerson Algorithm
 10. Construction of a tree from Inorder and Preorder/Postorder Traversal
+11. Articulation points
+12. Bridges
+13. Lowest Common Ancestor (Tarjan's Algorithm)
+14. Bipartite Matching
 
 We will assume that the following is the strcuture of the tree:
 
@@ -1571,3 +1579,491 @@ Output:
 | Best Case                | O(N)  |
 | Worst Case               | O(N)  |
 | Average Case             | O(N)  |
+
+## 11. Articulation Points
+
+Aritculation points are those nodes in a graph whose removal increases the number of connected components in the graph.
+
+In other words, represent the vulnerabilities in a connected graph.Single points whose failures would split the network into 2 or more disconnected components.
+They are useful in designing reliable networks.
+
+**Algorithm: Naive Approach**
+
+1. Input: A graph with N nodes and E edges.
+2. Output: The articulation points in the graph.
+3. For each node in the graph, do the following:
+   - Remove the node from the graph.
+   - Check the number of connected components in the graph.
+   - If the number of connected components is greater than the original number of connected components, the node is an articulation point.
+
+```cpp
+class Solution{
+    public:
+    void dfs(int node, vector<vector<int>>& adj, vector<bool>& visited){
+        visited[node] = true;
+        for(auto it : adj[node]){
+            if(!visited[it]){
+                dfs(it, adj, visited);
+            }
+        }
+    }
+    int findArticulationPoints(vector<vector<int>>& adj, int V){
+        int count = 0;
+        vector<int>articulationPoints;
+        for(int i = 0; i < V; i++){
+            vector<bool> visited(V, false);
+            visited[i] = true; // marking true before the traversal is effectively removing the node
+            int components = 0;
+            for(int j = 0; j < V; j++){
+                if(!visited[j]){
+                    dfs(j, adj, visited);
+                    components++;
+                }
+            }
+            if(components > 1){
+                count++;
+                articulationPoints.push_back(i);
+            }
+        }
+        return count;
+    }
+}
+```
+
+> Here we are using adjacency List representation of the graph.
+
+Here we follow a brute force approach where we remove each node from the graph and check the number of connected components in the graph.
+We use DFS to check how many nodes are present in a component.
+We run DFS from each node. But before starting the DFS, we mark the node as visited.
+This acts like removing the node.
+If the `ith` node causes the graph to split then it will cause the `if !visited[j]` condition to be true.
+This means that the number of connected components is greater than the original number of connected components.
+
+| Time complexity Analysis | Value     |
+| ------------------------ | --------- |
+| Best Case                | O(V(V+E)) |
+| Worst Case               | O(V(V+E)) |
+| Average Case             | O(V(V+E)) |
+
+**Algorithm: Tarjan's Algorithm**:
+The idea is to use DFS (Depth First Search). In DFS, follow vertices in a tree form called the DFS tree. In the DFS tree, a vertex `u` is the parent of another vertex `v`, if `v` is discovered by `u`.
+
+In DFS tree, a vertex u is an articulation point if one of the following two conditions is true.
+
+- `u` is the root of the DFS tree and it has at least two children.
+- `u` is not the root of the DFS tree and it has a child `v` such that no vertex in the subtree rooted with `v` has a back edge to one of the ancestors in DFS tree of `u`.
+
+1. Input: A graph with N nodes and E edges.
+2. Output: The articulation points in the graph.
+3. Initialize the discovery time and low time of each node.
+4. For each node in the graph, do the following:
+   - If the node is not visited, do the following:
+     - Find the articulation points using DFS.
+5. Return the number of articulation points.
+
+- Discovery time: The time at which the node is discovered in the DFS traversal.
+- Low time: The lowest discovery time of the node reachable from the current node.
+- Logically Low time tells us what is the minimum discovery time of the node reachable from the current node.
+
+```cpp
+class Solution{
+    public:
+    void dfs(int node, int parent, vector<vector<int>>& adj, vector<int>& disc, vector<int>& low, vector<bool>& visited, vector<bool>& ap, int& time){
+        visited[node] = true; // marks the current node as visited
+        disc[node] = low[node] = time++; // assigns the discovery time and low time of the node
+        int children = 0; // to count the number of children of the node
+        for(auto it : adj[node]){ // for each neighbor of the node
+            if(!visited[it]){ // if the neighbor is not visited
+                children++; // increment the children count ( this node is a child of the current node)
+                dfs(it, node, adj, disc, low, visited, ap, time); // recursively call the dfs function
+                low[node] = min(low[node], low[it]); // update the low time of the node
+                if(parent != -1 && low[it] >= disc[node]){ // if the low time of the neighbor is greater than or equal to the discovery time of the node
+                    ap[node] = true; // then its an articulation point
+                }
+            }else if(it != parent){  // if the neighbor is visited and it is not the parent of the node
+                low[node] = min(low[node], disc[it]); // update the low time of the node
+            }
+        }
+        if(parent == -1 && children > 1){ // if the node is the root of the dfs tree and it has more than one child
+            ap[node] = true; // we can split the graph by removing the root node
+        }
+    }
+    int findArticulationPoints(vector<vector<int>>& adj, int V){
+        vector<int> disc(V, -1);
+        vector<int> low(V, -1);
+        vector<bool> visited(V, false);
+        vector<bool> ap(V, false);
+        int time = 0;
+        for(int i = 0; i < V; i++){
+            if(!visited[i]){
+                dfs(i, -1, adj, disc, low, visited, ap, time);
+            }
+        }
+        int count = 0;
+        for(int i = 0; i < V; i++){
+            if(ap[i]){
+                count++;
+            }
+        }
+        return count;
+    }
+}
+```
+
+DFS function:
+
+- Inputs: node, parent-node, adjacency list, discovery time, low time, visited array, articulation points array, and time.
+- If the node is not visited, mark the node as visited and assign the discovery time and low time of the node.
+- This will tell what time the node got discovered
+- Initialize the children count to 0.
+- For each neighbor of the node, do the following:
+  - If the neighbor is not visited, increment the children count and recursively call the DFS function.
+  - Update the low time of the node.
+  - If the neighbor is not the parent of the node and the low time of the neighbor is greater than or equal to the discovery time of the node, mark the node as an articulation point.
+  - If the neighbor is visited and it is not the parent of the node, update the low time of the node.
+- If the node is the root of the DFS tree and it has more than one child, mark the node as an articulation point.
+
+```
+Dry run
+    0
+   / \
+  1   2
+   \ /
+    3
+   / \
+  4   5
+
+- disc (Discovery time): [-1, -1, -1, -1, -1, -1]
+- low (Lowest discovery time reachable): [-1, -1, -1, -1, -1, -1]
+- visited (Visited nodes): [false, false, false, false, false, false]
+- ap (Articulation points): [false, false, false, false, false, false]
+- time: 0
+```
+
+| Step | Node | Parent | Children | Disc                    | Low                     | Visited            | AP                 | Time | Comments                          |
+| ---- | ---- | ------ | -------- | ----------------------- | ----------------------- | ------------------ | ------------------ | ---- | --------------------------------- |
+| 1    | 0    | -1     | 0        | [0, -1, -1, -1, -1, -1] | [0, -1, -1, -1, -1, -1] | [T, F, F, F, F, F] | [F, F, F, F, F, F] | 1    | Root of DFS tree                  |
+| 2    | 1    | 0      | 0        | [0, 1, -1, -1, -1, -1]  | [0, 1, -1, -1, -1, -1]  | [T, T, F, F, F, F] | [F, F, F, F, F, F] | 2    | Visit child 1 of 0                |
+| 3    | 3    | 1      | 0        | [0, 1, -1, 2, -1, -1]   | [0, 1, -1, 2, -1, -1]   | [T, T, F, T, F, F] | [F, F, F, F, F, F] | 3    | Visit child 3 of 1                |
+| 4    | 2    | 3      | 0        | [0, 1, 3, 2, -1, -1]    | [0, 1, 3, 2, -1, -1]    | [T, T, T, T, F, F] | [F, F, F, F, F, F] | 4    | Visit child 2 of 3                |
+| 5    | 3    | 2      | 0        | [0, 1, 3, 2, -1, -1]    | [0, 1, 3, 2, -1, -1]    | [T, T, T, T, F, F] | [F, F, F, F, F, F] | 4    | Back to node 3 from 2             |
+| 6    | 4    | 3      | 0        | [0, 1, 3, 2, 4, -1]     | [0, 1, 3, 2, 4, -1]     | [T, T, T, T, T, F] | [F, F, F, F, F, F] | 5    | Visit child 4 of 3                |
+| 7    | 3    | 4      | 0        | [0, 1, 3, 2, 4, -1]     | [0, 1, 3, 2, 4, -1]     | [T, T, T, T, T, F] | [F, F, F, F, F, F] | 5    | Back to node 3 from 4             |
+| 8    | 5    | 3      | 0        | [0, 1, 3, 2, 4, 5]      | [0, 1, 3, 2, 4, 5]      | [T, T, T, T, T, T] | [F, F, F, F, F, F] | 6    | Visit child 5 of 3                |
+| 9    | 3    | 5      | 0        | [0, 1, 3, 2, 4, 5]      | [0, 1, 3, 2, 4, 5]      | [T, T, T, T, T, T] | [F, F, F, F, F, F] | 6    | Back to node 3 from 5             |
+| 10   | 3    | 1      | 2        | [0, 1, 3, 2, 4, 5]      | [0, 1, 3, 2, 4, 5]      | [T, T, T, T, T, T] | [F, F, F, T, F, F] | 6    | Node 3: Articulation point        |
+| 11   | 1    | 0      | 1        | [0, 1, 3, 2, 4, 5]      | [0, 1, 3, 2, 4, 5]      | [T, T, T, T, T, T] | [F, F, F, T, F, F] | 6    | Node 1: Not an articulation point |
+| 12   | 0    | -1     | 1        | [0, 1, 3, 2, 4, 5]      | [0, 1, 3, 2, 4, 5]      | [T, T, T, T, T, T] | [F, F, F, T, F, F] | 6    | Node 0: Not an articulation point |
+
+| Time complexity Analysis | Value  |
+| ------------------------ | ------ |
+| Best Case                | O(V+E) |
+| Worst Case               | O(V+E) |
+| Average Case             | O(V+E) |
+
+## 12. Bridges
+
+Bridge is a vulnerable edge in a graph. If we remove a bridge, the graph will be disconnected.
+
+**Algorithm: Naive Approach**
+
+1. Input: A graph with N nodes and E edges.
+2. Output: The bridges in the graph.
+3. For each edge in the graph, do the following:
+   - Remove the edge from the graph.
+   - Check the number of connected components in the graph.
+   - If the number of connected components is greater than the original number of connected components, the edge is a bridge.
+
+```cpp
+class Solution{
+    public:
+    void dfs(int node, vector<vector<int>>& adj, vector<bool>& visited){
+        visited[node] = true;
+        for(auto it : adj[node]){
+            if(!visited[it]){
+                dfs(it, adj, visited);
+            }
+        }
+    }
+    int findBridges(vector<vector<int>>& adj, int V){
+        int count = 0;
+        vector<pair<int, int>> bridges;
+        for(int i = 0; i < V; i++){
+            for(auto it : adj[i]){
+                vector<vector<int>> temp = adj;
+                temp[i].erase(find(temp[i].begin(), temp[i].end(), it));
+                temp[it].erase(find(temp[it].begin(), temp[it].end(), i));
+                vector<bool> visited(V, false);
+                int components = 0;
+                for(int j = 0; j < V; j++){
+                    if(!visited[j]){
+                        dfs(j, temp, visited);
+                        components++;
+                    }
+                }
+                if(components > 1){
+                    count++;
+                    bridges.push_back({i, it});
+                }
+            }
+        }
+        return count;
+    }
+}
+```
+
+| Time complexity Analysis | Value     |
+| ------------------------ | --------- |
+| Best Case                | O(E(V+E)) |
+| Worst Case               | O(E(V+E)) |
+| Average Case             | O(E(V+E)) |
+
+**Algorithm: Tarjan's Algorithm**
+Here we can use the same algorithm as we used for finding articulation points.
+
+```cpp
+class Solution{
+    public:
+    void dfs(int node, int parent, vector<vector<int>>& adj, vector<int>& disc, vector<int>& low, vector<bool>& visited, vector<pair<int, int>>& bridges, int& time){
+        visited[node] = true;
+        disc[node] = low[node] = time++;
+        for(auto it : adj[node]){
+            if(!visited[it]){
+                dfs(it, node, adj, disc, low, visited, bridges, time);
+                low[node] = min(low[node], low[it]);
+                if(low[it] > disc[node]){
+                    bridges.push_back({node, it});
+                }
+            }else if(it != parent){
+                low[node] = min(low[node], disc[it]);
+            }
+        }
+    }
+    int findBridges(vector<vector<int>>& adj, int V){
+        vector<int> disc(V, -1);
+        vector<int> low(V, -1);
+        vector<bool> visited(V, false);
+        vector<pair<int, int>> bridges;
+        int time = 0;
+        for(int i = 0; i < V; i++){
+            if(!visited[i]){
+                dfs(i, -1, adj, disc, low, visited, bridges, time);
+            }
+        }
+        return bridges.size();
+    }
+}
+```
+
+The explanation is the same as the one we used for finding articulation points.
+
+| Time complexity Analysis | Value  |
+| ------------------------ | ------ |
+| Best Case                | O(V+E) |
+| Worst Case               | O(V+E) |
+| Average Case             | O(V+E) |
+
+## 13. Lowest Common Ancestor (LCA) using Tarjan's Algorithm
+
+LCA in a graph is the lowest common ancestor of two nodes in a graph.
+But tarjan's algorithm is used to find strongly connected components in a graph.
+We need to modify the algorithm to find the LCA.
+We can find the LCA of two nodes in a graph by finding the LCA of the two nodes in the DFS tree.
+
+**Tarjan's Algorithm**:
+The idea is to use DFS (Depth First Search). In DFS, follow vertices in a tree form called the DFS tree. In the DFS tree, a vertex `u` is the parent of another vertex `v`, if `v` is discovered by `u`.
+
+In DFS tree, a vertex u is an articulation point if one of the following two conditions is true.
+
+- `u` is the root of the DFS tree and it has at least two children.
+- `u` is not the root of the DFS tree and it has a child `v` such that no vertex in the subtree rooted with `v` has a back edge to one of the ancestors in DFS tree of `u`.
+- The idea is to find the LCA of two nodes in the DFS tree.
+- The LCA of two nodes in the DFS tree is the node with the lowest discovery time in the path from the root to the two nodes.
+
+```cpp
+class Solution{
+    public:
+    void dfs(int node, int parent, vector<vector<int>>& adj, vector<int>& disc, vector<int>& low, vector<bool>& visited, vector<int>& parentArr, int& time){
+        visited[node] = true;
+        disc[node] = low[node] = time++;
+        parentArr[node] = parent;
+        for(auto it : adj[node]){
+            if(!visited[it]){
+                dfs(it, node, adj, disc, low, visited, parentArr, time);
+                low[node] = min(low[node], low[it]);
+            }else if(it != parent){
+                low[node] = min(low[node], disc[it]);
+            }
+        }
+    }
+    int findLCA(int u, int v, vector<int>& parentArr, vector<int>& disc, vector<int>& low){
+        while(disc[u] > disc[v]){
+            u = parentArr[u];
+        }
+        while(disc[v] > disc[u]){
+            v = parentArr[v];
+        }
+        while(u != v){
+            u = parentArr[u];
+            v = parentArr[v];
+        }
+        return u;
+    }
+    int findLCAinGraph(vector<vector<int>>& adj, int V, int u, int v){
+        vector<int> disc(V, -1);
+        vector<int> low(V, -1);
+        vector<bool> visited(V, false);
+        vector<int> parentArr(V, -1);
+        int time = 0;
+        for(int i = 0; i < V; i++){
+            if(!visited[i]){
+                dfs(i, -1, adj, disc, low, visited, parentArr, time);
+            }
+        }
+        return findLCA(u, v, parentArr, disc, low);
+    }
+}
+```
+
+In this code, we are finding the LCA of two nodes in a graph using Tarjan's algorithm.
+
+- We are finding the discovery time and low time of each node in the graph.
+- We are finding the parent of each node in the graph.
+- LCA of two nodes in the graph is the LCA of the two nodes in the DFS tree.
+- Hence LCA of two nodes can be either one of the two nodes or the node with the lowest discovery time in the path from the root to the two nodes.
+
+```
+Dry run
+    0
+   / \
+  1   2
+   \ /
+    3
+   / \
+  4   5
+
+LCA(4, 5) = 3
+LCA(4, 3) = 3
+LCA(2, 3) = 0
+LCA(2, 4) = 0
+```
+
+| Time complexity Analysis | Value  |
+| ------------------------ | ------ |
+| Best Case                | O(V+E) |
+| Worst Case               | O(V+E) |
+| Average Case             | O(V+E) |
+
+## 14. Bipaertite Matching
+
+A Bipartite graph is a graph whose vertices can be divided into two disjoint sets such that every edge connects a vertex in one set to a vertex in the other set.
+
+Example: A graph is bipartite if it can be colored using two colors such that no two adjacent vertices have the same color.
+
+```
+    1 - 2
+    |   |
+    3 - 4
+```
+
+then Set s1 = {1, 3} and Set s2 = {2, 4}.
+
+**Algorithm:**
+
+1. Input: A bipartite graph with N nodes and E edges.
+2. Output: The maximum number of matching pairs in the graph.
+3. Convert the bipartite graph into a flow network.
+4. Find the maximum flow in the flow network.
+5. The maximum flow is the maximum number of matching pairs in the graph.
+
+```cpp
+class Solution{
+    public:
+    int maxMatching(vector<vector<int>>& graph, int V){
+        vector<vector<int>> flowGraph(V, vector<int>(V, 0)); // Intialize the flow graph flowGraph[u][v] = 0
+        for(int i = 0; i < V; i++){
+            for(auto it : graph[i]){
+                flowGraph[i][it] = 1; // Assign the capacity of the edge from u to v as 1
+            }
+        }
+        int maxFlow = 0; // Initialize the maximum flow as 0
+        while(true){ // Repeat the following steps until there is no path from the source node to the sink node, we are performing Ford-Fulkerson algorithm
+            vector<int> parent(V, -1); // Initialize the parent array with -1
+            queue<int> q; // Initialize a queue
+            q.push(0); // Push the source node into the queue
+            parent[0] = 0; // Mark the source node as visited
+            while(!q.empty()){ // While the queue is not empty
+                int u = q.front(); // Get the front element of the queue
+                q.pop(); // Pop the front element of the queue
+                for(int v = 0; v < V; v++){ // For each neighbor of the node
+                    if(parent[v] == -1 && flowGraph[u][v] > 0){ // If the neighbor is not visited and the capacity of the edge is greater than 0
+                        parent[v] = u; // Mark the neighbor as visited
+                        q.push(v); // Push the neighbor into the queue
+                    }
+                }
+            }
+            if(parent[V-1] == -1){ // If the sink node is not visited
+                break;
+            }
+            int pathFlow = INT_MAX; // Initialize the path flow as infinity
+            for(int v = V-1; v != 0; v = parent[v]){ // Find the minimum capacity of the path
+                int u = parent[v]; // Get the parent of the node
+                pathFlow = min(pathFlow, flowGraph[u][v]); // Find the minimum capacity of the path
+            }
+            for(int v = V-1; v != 0; v = parent[v]){ // Update the flow of the path from sink to source
+                int u = parent[v]; // Get the parent of the node
+                flowGraph[u][v] -= pathFlow; // Update the flow of the edge from u to v
+                flowGraph[v][u] += pathFlow; // Update the flow of the edge from v to u
+            }
+            maxFlow += pathFlow; // Update the maximum flow
+        }
+        return maxFlow;
+    }
+}
+```
+
+| Time complexity Analysis | Value    |
+| ------------------------ | -------- |
+| Best Case                | O(V E^2) |
+| Worst Case               | O(V E^2) |
+| Average Case             | O(V E^2) |
+
+We can reduce the space complexity by using dfs instead of ford fulkerson algorithm.
+
+```cpp
+class Solution{
+    public:
+    bool dfs(vector<vector<int>>& graph, vector<int>& match, vector<bool>& visited, int u){
+        for(auto v : graph[u]){
+            if(visited[v]){
+                continue;
+            }
+            visited[v] = true;
+            if(match[v] == -1 || dfs(graph, match, visited, match[v])){
+                match[v] = u;
+                return true;
+            }
+        }
+        return false;
+    }
+    int maxMatching(vector<vector<int>>& graph, int V){
+        vector<int> match(V, -1);
+        int count = 0;
+        for(int i = 0; i < V; i++){
+            vector<bool> visited(V, false);
+            if(dfs(graph, match, visited, i)){
+                count++;
+            }
+        }
+        return count;
+    }
+}
+```
+
+| Time complexity Analysis | Value |
+| ------------------------ | ----- |
+| Best Case                | O(VE) |
+| Worst Case               | O(VE) |
+| Average Case             | O(VE) |
+
+> There is also a Hopcroft-Karp algorithm which is more efficient than the above algorithm.
