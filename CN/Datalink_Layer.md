@@ -1,7 +1,12 @@
 # Table of contents
 
-| Sl no | Topic |
-| ----- | ----- |
+| Sl no | Topic                                                               |
+| ----- | ------------------------------------------------------------------- |
+| 1.    | [Framing](#1-framing)                                               |
+| 2.    | [Error Detection and Correction](#2-error-detection-and-correction) |
+| 3.    | [Protocols in Data Link Layer](#3-protocols-in-data-link-layer)     |
+| 4.    | [Multiple Access Protocols](#4-multiple-access-protocols)           |
+| 5.    | [MAC Address](#5-mac-address)                                       |
 
 ## Introduction
 
@@ -151,9 +156,9 @@ In this protocol, the station sends a token to the receiver. The receiver sends 
 Until the token is received, the station cannot send the data.
 
 ## 5. MAC Address
+
 What is MAC Address?
 MAC Address is a unique identifier assigned to the network interface for communications on the physical network segment. It is also known as the hardware address or physical address.
 This is a 48-bit address. The first 24 bits are the OUI (Organizationally Unique Identifier) and the last 24 bits are the NIC (Network Interface Controller) specific address.
 
 This address is static and is assigned by the manufacturer.
-
